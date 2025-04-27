@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Restaurant Menu - Food Panda</title>
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <!-- Google Fonts - Poppins -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="../css/style.css">
+  <style>
+    /* Ensure navbar is always visible */
+    .navbar {
+      background-color: var(--primary-color);
+      color: white;
+      display: block !important;
+      visibility: visible !important;
+      opacity: 1 !important;
+    }
+    
+    .navbar-container {
+      padding: 15px 0;
+    }
+    
+    .logo-text {
+      color: white;
+    }
+    
+    .nav-links a {
+      color: white;
+    }
+    
+    .nav-links a:hover, 
+    .nav-links .active {
+      color: #ffcce0;
+    }
+    
+    .hamburger {
+      color: white;
+    }
+    
+    /* Restaurant Banner */
+    .restaurant-banner {
+      background-color: var(--gray-color);
+      padding: 30px 0;
+      margin-bottom: 30px;
+    }
+    
+    .restaurant-detail {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      margin-bottom: 15px;
+    }
+    
+    .restaurant-logo {
+      width: 100px;
+      height: 100px;
+      border-radius: 8px;
+      object-fit: cover;
+      border: 3px solid white;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+    }
+    
+    .restaurant-info h1 {
+      margin-bottom: 8px;
+      font-size: 1.8rem;
+    }
+    
+    .restaurant-info p {
+      color: var(--dark-gray);
+      margin: 0;
+    }
+    
+    .restaurant-meta {
+      display: flex;
+      gap: 20px;
+    }
+    
+    .restaurant-meta div {
+      display: flex;
+      align-items: center;
+    }
+    
+    .restaurant-meta i {
+      color: var(--primary-color);
+      margin-right: 5px;
+    }
+    
+    /* Menu Navigation */
+    .menu-nav {
+      display: flex;
+      overflow-x: auto;
+      gap: 10px;
+      padding-bottom: 15px;
+      margin-bottom: 30px;
+      border-bottom: 1px solid var(--border-color);
+    }
+    
+    .menu-nav::-webkit-scrollbar {
+      height: 5px;
+    }
+    
+    .menu-nav::-webkit-scrollbar-thumb {
+      background-color: var(--border-color);
+      border-radius: 5px;
+    }
+    
+    .menu-nav-item {
+      padding: 8px 15px;
+      background-color: var(--gray-color);
+      border-radius: 20px;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.3s;
+    }
+    
+    .menu-nav-item.active {
+      background-color: var(--primary-color);
+      color: white;
+    }
+    
+    /* Menu Items */
+    .menu-category {
+      margin-bottom: 40px;
+    }
+    
+    .menu-category-title {
+      font-size: 1.5rem;
+      margin-bottom: 20px;
+      color: var(--text-color);
+      position: relative;
+      display: inline-block;
+      padding-bottom: 8px;
+    }
+    
+    .menu-category-title::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 40px;
+      height: 3px;
+      background-color: var(--primary-color);
+    }
+    
+    .menu-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
+    }
+    
+    .menu-item {
+      background-color: white;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      transition: transform 0.3s, box-shadow 0.3s;
+      position: relative;
+    }
+    
+    .menu-item:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+    
+    .menu-item-img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+    }
+    
+    .menu-item-content {
+      padding: 15px;
+    }
+    
+    .menu-item-title {
+      font-size: 1.2rem;
+      margin-bottom: 8px;
+      color: var(--text-color);
+    }
+    
+    .menu-item-desc {
+      color: var(--dark-gray);
+      font-size: 0.9rem;
+      margin-bottom: 10px;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    
+    .menu-item-price {
+      color: var(--primary-color);
+      font-weight: 600;
+      font-size: 1.1rem;
+      margin-bottom: 15px;
+    }
+    
+    .menu-item-actions {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    
+    .favorite-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background-color: white;
+      border: none;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+      transition: all 0.3s;
+      z-index: 2;
+    }
+    
+    .favorite-btn i {
+      color: #ccc;
+      font-size: 18px;
+      transition: color 0.3s;
+    }
+    
+    .favorite-btn.active i {
+      color: var(--primary-color);
+    }
+    
+    .favorite-btn:hover i {
+      color: var(--primary-color);
+    }
+    
+    .empty-menu {
+      text-align: center;
+      padding: 50px 0;
+    }
+    
+    .empty-menu i {
+      font-size: 4rem;
+      color: var(--dark-gray);
+      margin-bottom: 20px;
+    }
+    
+    .empty-menu h3 {
+      font-size: 1.5rem;
+      margin-bottom: 10px;
+    }
+    
+    .empty-menu p {
+      color: var(--dark-gray);
+    }
+    
+    /* Cart Floating Button */
+    .cart-fab {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      width: 60px;
+      height: 60px;
+      background-color: var(--primary-color);
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    
+    .cart-fab:hover {
+      transform: scale(1.1);
+    }
+    
+    .cart-count {
+      position: absolute;
+      top: -5px;
+      right: -5px;
+      width: 25px;
+      height: 25px;
+      background-color: white;
+      color: var(--primary-color);
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 0.8rem;
+      font-weight: 600;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .restaurant-detail {
+        flex-direction: column;
+        align-items: flex-start;
+        text-align: center;
+      }
+      
+      .restaurant-logo {
+        margin: 0 auto;
+      }
+      
+      .restaurant-info {
+        text-align: center;
+      }
+      
+      .restaurant-meta {
+        justify-content: center;
+      }
+      
+      .menu-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="container navbar-container">
+      <div class="logo">
+        <a href="../index.html">
+          <span class="logo-text">foodpanda</span>
+        </a>
+      </div>
+      <ul class="nav-links auth-links">
+        <li><a href="../index.html">Home</a></li>
+        <li><a href="restaurants.html" class="active">Restaurants</a></li>
+        <li><a href="../auth/login.html">Login</a></li>
+        <li><a href="../auth/signup.html">Sign Up</a></li>
+      </ul>
+      <ul class="nav-links user-links" style="display: none;">
+        <li><a href="../index.html">Home</a></li>
+        <li><a href="restaurants.html" class="active">Restaurants</a></li>
+        <li><a href="cart.html">Cart</a></li>
+        <li><a href="#" id="logout-link">Logout</a></li>
+      </ul>
+      <button class="hamburger">
+        <i class="fas fa-bars"></i>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Mobile Navigation -->
+  <div class="mobile-nav">
+    <ul class="mobile-nav-links auth-links">
+      <li><a href="../index.html">Home</a></li>
+      <li><a href="restaurants.html" class="active">Restaurants</a></li>
+      <li><a href="../auth/login.html">Login</a></li>
+      <li><a href="../auth/signup.html">Sign Up</a></li>
+    </ul>
+    <ul class="mobile-nav-links user-links" style="display: none;">
+      <li><a href="../index.html">Home</a></li>
+      <li><a href="restaurants.html" class="active">Restaurants</a></li>
+      <li><a href="cart.html">Cart</a></li>
+      <li><a href="#" id="mobile-logout-link">Logout</a></li>
+    </ul>
+  </div>
+
+  <!-- Message Container for notifications -->
+  <div id="message-container"></div>
+
+  <!-- Restaurant Banner -->
+  <div class="restaurant-banner">
+    <div class="container">
+      <div class="restaurant-detail">
+        <img id="restaurant-logo" src="../assets/restaurant-placeholder.jpg" alt="Restaurant Logo" class="restaurant-logo">
+        <div class="restaurant-info">
+          <h1 id="restaurant-name">Restaurant Name</h1>
+          <p id="restaurant-description">Restaurant description will be displayed here.</p>
+        </div>
+      </div>
+      <div class="restaurant-meta">
+        <div>
+          <i class="fas fa-star"></i>
+          <span id="restaurant-rating">4.5</span>
+        </div>
+        <div>
+          <i class="fas fa-clock"></i>
+          <span id="restaurant-delivery-time">30-40 min</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Menu Content -->
+  <div class="container">
+    <!-- Categories Navigation -->
+    <div id="menu-nav" class="menu-nav">
+      <!-- Categories will be dynamically added here -->
+    </div>
+
+    <!-- Menu Items by Category -->
+    <div id="menu-categories">
+      <!-- Menu categories will be dynamically added here -->
+    </div>
+    
+    <!-- Empty state (shown when no menu items found) -->
+    <div id="empty-menu" class="empty-menu" style="display: none;">
+      <i class="fas fa-utensils"></i>
+      <h3>No Menu Items Found</h3>
+      <p>This restaurant hasn't added any items to their menu yet.</p>
+    </div>
+  </div>
+  
+  <!-- Floating Cart Button -->
+  <div class="cart-fab" id="cart-fab">
+    <i class="fas fa-shopping-cart"></i>
+    <span class="cart-count" id="cart-count">0</span>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-column">
+          <h3>foodpanda</h3>
+          <p>Delivering food happiness to your doorstep.</p>
+        </div>
+        <div class="footer-column">
+          <h4>Quick Links</h4>
+          <ul>
+            <li><a href="../index.html">Home</a></li>
+            <li><a href="restaurants.html">Restaurants</a></li>
+            <li><a href="cart.html">Cart</a></li>
+            <li><a href="../auth/login.html">Login</a></li>
+            <li><a href="../auth/signup.html">Sign Up</a></li>
+          </ul>
+        </div>
+        <div class="footer-column">
+          <h4>Contact Us</h4>
+          <p><i class="fas fa-envelope"></i> support@foodpanda.com</p>
+          <p><i class="fas fa-phone-alt"></i> +1 (555) 123-4567</p>
+          <p><i class="fas fa-map-marker-alt"></i> 123 Delivery St, Food City</p>
+          <div class="social-links">
+            <a href="#"><i class="fab fa-facebook-f"></i></a>
+            <a href="#"><i class="fab fa-twitter"></i></a>
+            <a href="#"><i class="fab fa-instagram"></i></a>
+            <a href="#"><i class="fab fa-linkedin-in"></i></a>
+          </div>
+        </div>
+        <div class="footer-column">
+          <h4>Popular Locations</h4>
+          <ul class="locations-list">
+            <li><a href="#">New York</a></li>
+            <li><a href="#">Los Angeles</a></li>
+            <li><a href="#">Chicago</a></li>
+            <li><a href="#">Houston</a></li>
+            <li><a href="#">Phoenix</a></li>
+            <li><a href="#">Philadelphia</a></li>
+            <li><a href="#">San Antonio</a></li>
+            <li><a href="#">San Diego</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="copyright">
+        <p>&copy; 2023 foodpanda. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- JavaScript -->
+  <script src="../js/app.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async function() {
+      // Logout functionality
+      const logoutLinks = [
+        document.getElementById('logout-link'),
+        document.getElementById('mobile-logout-link')
+      ];
+      
+      logoutLinks.forEach(link => {
+        if (link) {
+          link.addEventListener('click', async function(e) {
+            e.preventDefault();
+            
+            try {
+              await window.foodPandaApp.logoutUser();
+              window.foodPandaApp.showMessage('Logged out successfully!', 'success');
+              setTimeout(() => {
+                window.location.href = '../index.html';
+              }, 1500);
+            } catch (error) {
+              window.foodPandaApp.showMessage('An error occurred during logout.', 'error');
+              console.error(error);
+            }
+          });
+        }
+      });
+      
+      // Get references to DOM elements
+      const restaurantLogo = document.getElementById('restaurant-logo');
+      const restaurantName = document.getElementById('restaurant-name');
+      const restaurantDescription = document.getElementById('restaurant-description');
+      const restaurantRating = document.getElementById('restaurant-rating');
+      const restaurantDeliveryTime = document.getElementById('restaurant-delivery-time');
+      const menuNav = document.getElementById('menu-nav');
+      const menuCategories = document.getElementById('menu-categories');
+      const emptyMenu = document.getElementById('empty-menu');
+      const cartFab = document.getElementById('cart-fab');
+      const cartCount = document.getElementById('cart-count');
+      
+      // Get restaurant ID from URL parameters
+      const urlParams = new URLSearchParams(window.location.search);
+      const restaurantId = urlParams.get('id');
+      
+      if (!restaurantId) {
+        window.location.href = 'restaurants.html';
+        return;
+      }
+      
+      // Get restaurant details
+      let restaurant;
+      try {
+        const result = await window.foodPandaApp.getRestaurants();
+        if (result.success) {
+          restaurant = result.restaurants.find(r => r.id === restaurantId);
+          
+          if (!restaurant) {
+            window.location.href = 'restaurants.html';
+            return;
+          }
+          
+          // Update restaurant details in the UI
+          updateRestaurantDetails(restaurant);
+        } else {
+          window.foodPandaApp.showMessage('Failed to load restaurant details.', 'error');
+          console.error(result.error);
+        }
+      } catch (error) {
+        window.foodPandaApp.showMessage('An error occurred while loading restaurant details.', 'error');
+        console.error(error);
+      }
+      
+      // Get categories for the restaurant
+      let categories = [];
+      try {
+        const result = await window.foodPandaApp.getCategories(restaurantId);
+        if (result.success) {
+          categories = result.categories;
+          
+          // Create category navigation
+          if (categories.length > 0) {
+            createCategoryNavigation(categories);
+          }
+        } else {
+          window.foodPandaApp.showMessage('Failed to load menu categories.', 'error');
+          console.error(result.error);
+        }
+      } catch (error) {
+        window.foodPandaApp.showMessage('An error occurred while loading menu categories.', 'error');
+        console.error(error);
+      }
+      
+      // Get all menu items for the restaurant
+      let menuItems = [];
+      try {
+        const result = await window.foodPandaApp.getMenuItems(restaurantId);
+        if (result.success) {
+          menuItems = result.menuItems;
+          
+          // If no menu items, show empty state
+          if (menuItems.length === 0) {
+            emptyMenu.style.display = 'block';
+          } else {
+            // Create menu sections by category
+            createMenuSections(categories, menuItems);
+          }
+        } else {
+          window.foodPandaApp.showMessage('Failed to load menu items.', 'error');
+          console.error(result.error);
+          emptyMenu.style.display = 'block';
+        }
+      } catch (error) {
+        window.foodPandaApp.showMessage('An error occurred while loading menu items.', 'error');
+        console.error(error);
+        emptyMenu.style.display = 'block';
+      }
+      
+      // Function to update restaurant details in the UI
+      function updateRestaurantDetails(restaurant) {
+        document.title = `${restaurant.name} - Food Panda`;
+        
+        // Set restaurant logo if available
+        if (restaurant.image) {
+          restaurantLogo.src = restaurant.image;
+        }
+        
+        restaurantName.textContent = restaurant.name;
+        restaurantDescription.textContent = restaurant.description || 'No description available';
+        restaurantRating.textContent = restaurant.rating.toFixed(1);
+        restaurantDeliveryTime.textContent = restaurant.deliveryTime || '30-40 min';
+      }
+      
+      // Function to create category navigation
+      function createCategoryNavigation(categories) {
+        menuNav.innerHTML = '';
+        
+        // Add "All" category link
+        const allLink = document.createElement('a');
+        allLink.href = '#';
+        allLink.textContent = 'All';
+        allLink.classList.add('active');
+        allLink.addEventListener('click', function(e) {
+          e.preventDefault();
+          
+          // Remove active class from all links
+          document.querySelectorAll('#menu-nav a').forEach(link => {
+            link.classList.remove('active');
+          });
+          
+          // Add active class to this link
+          this.classList.add('active');
+          
+          // Show all categories
+          document.querySelectorAll('.menu-category').forEach(category => {
+            category.style.display = 'block';
+          });
+        });
+        
+        menuNav.appendChild(allLink);
+        
+        // Add category links
+        categories.forEach(category => {
+          const link = document.createElement('a');
+          link.href = `#category-${category.id}`;
+          link.textContent = category.name;
+          link.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            // Remove active class from all links
+            document.querySelectorAll('#menu-nav a').forEach(link => {
+              link.classList.remove('active');
+            });
+            
+            // Add active class to this link
+            this.classList.add('active');
+            
+            // Hide all categories except the selected one
+            document.querySelectorAll('.menu-category').forEach(categoryElement => {
+              categoryElement.style.display = 'none';
+            });
+            
+            // Show the selected category
+            document.getElementById(`category-${category.id}`).style.display = 'block';
+            
+            // Scroll to the category
+            document.getElementById(`category-${category.id}`).scrollIntoView({
+              behavior: 'smooth'
+            });
+          });
+          
+          menuNav.appendChild(link);
+        });
+      }
+      
+      // Function to create menu sections by category
+      function createMenuSections(categories, menuItems) {
+        menuCategories.innerHTML = '';
+        
+        // Group menu items by category
+        const menuItemsByCategory = {};
+        
+        categories.forEach(category => {
+          menuItemsByCategory[category.id] = menuItems.filter(item => item.categoryId === category.id);
+        });
+        
+        // Create a section for each category
+        categories.forEach(category => {
+          const items = menuItemsByCategory[category.id];
+          
+          if (items && items.length > 0) {
+            const categorySection = document.createElement('div');
+            categorySection.className = 'menu-category';
+            categorySection.id = `category-${category.id}`;
+            
+            categorySection.innerHTML = `
+              <h2 class="category-title">${category.name}</h2>
+              <div class="menu-grid">
+                ${items.map(item => createMenuItemHTML(item)).join('')}
+              </div>
+            `;
+            
+            menuCategories.appendChild(categorySection);
+          }
+        });
+        
+        // Add event listeners to add-to-cart buttons
+        document.querySelectorAll('.add-to-cart-btn').forEach(button => {
+          button.addEventListener('click', function() {
+            const itemId = this.getAttribute('data-id');
+            const itemName = this.getAttribute('data-name');
+            const itemPrice = parseFloat(this.getAttribute('data-price'));
+            const itemImage = this.getAttribute('data-image');
+            
+            // Add item to cart
+            const item = {
+              id: itemId,
+              name: itemName,
+              price: itemPrice,
+              image: itemImage
+            };
+            
+            window.foodPandaApp.addToCart(item, restaurantId);
+            window.foodPandaApp.showMessage(`${itemName} added to cart!`, 'success');
+            
+            // Update cart count
+            updateCartCount();
+          });
+        });
+        
+        // Initialize cart count
+        updateCartCount();
+      }
+      
+      // Function to create HTML for a menu item
+      function createMenuItemHTML(item) {
+        // Use a default image if item image is not available
+        const imageUrl = item.image || '../assets/food-placeholder.jpg';
+        
+        return `
+          <div class="menu-item">
+            <button class="favorite-btn" data-id="${item.id}" onclick="toggleFavorite(event, '${item.id}')">
+              <i class="fas fa-heart"></i>
+            </button>
+            <img src="${imageUrl}" alt="${item.name}" class="menu-item-img">
+            <div class="menu-item-content">
+              <h3 class="menu-item-title">${item.name}</h3>
+              <p class="menu-item-desc">${item.description || 'No description available'}</p>
+              <p class="menu-item-price">$${item.price.toFixed(2)}</p>
+              <div class="menu-item-actions">
+                <button class="btn add-to-cart-btn" 
+                  data-id="${item.id}" 
+                  data-name="${item.name}" 
+                  data-price="${item.price}"
+                  data-image="${imageUrl}">
+                  <i class="fas fa-shopping-cart"></i> Add to Cart
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+      
+      // Toggle favorite function
+      function toggleFavorite(event, itemId) {
+        event.preventDefault();
+        event.stopPropagation();
+        
+        const button = event.currentTarget;
+        button.classList.toggle('active');
+        
+        // Get current favorites
+        let favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+        
+        // Check if item is already in favorites
+        const itemIndex = favorites.indexOf(itemId);
+        
+        if (itemIndex === -1) {
+          // Add to favorites
+          favorites.push(itemId);
+          window.foodPandaApp.showMessage('Added to favorites!', 'success');
+        } else {
+          // Remove from favorites
+          favorites.splice(itemIndex, 1);
+          window.foodPandaApp.showMessage('Removed from favorites', 'info');
+        }
+        
+        // Save favorites to localStorage
+        localStorage.setItem('favorites', JSON.stringify(favorites));
+      }
+      
+      // Function to update cart count
+      function updateCartCount() {
+        const cart = window.foodPandaApp.getCart();
+        let count = 0;
+        
+        if (cart && cart.items) {
+          count = cart.items.reduce((total, item) => total + (item.quantity || 1), 0);
+        }
+        
+        cartCount.textContent = count;
+        
+        // If cart has items different from current restaurant, show warning
+        if (cart.restaurantId && cart.restaurantId !== restaurantId && cart.items.length > 0) {
+          window.foodPandaApp.showMessage('Your cart contains items from another restaurant. It will be cleared if you add items from this restaurant.', 'warning');
+        }
+      }
+      
+      // Add click event to cart fab
+      cartFab.addEventListener('click', function() {
+        window.location.href = 'cart.html';
+      });
+    });
+  </script>
+</body>
+</html> 

@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Firebase Direct Test</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .container {
+      background-color: #f5f5f5;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .form-group {
+      margin-bottom: 15px;
+    }
+    label {
+      display: block;
+      margin-bottom: 5px;
+    }
+    input[type="email"],
+    input[type="password"],
+    input[type="text"] {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+    button {
+      background-color: #d60f65;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .error {
+      color: red;
+      font-size: 14px;
+    }
+    .success {
+      color: green;
+      font-size: 14px;
+    }
+    #result {
+      margin-top: 20px;
+      padding: 15px;
+      border-radius: 4px;
+      white-space: pre-wrap;
+      background-color: #f9f9f9;
+      border: 1px solid #ddd;
+      overflow: auto;
+      max-height: 300px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Firebase Direct Test</h1>
+    <p>This page tests Firebase authentication directly, bypassing the app.js layer</p>
+    
+    <div class="form-group">
+      <label for="email">Email:</label>
+      <input type="email" id="email" placeholder="Enter email" value="test@example.com">
+    </div>
+    
+    <div class="form-group">
+      <label for="password">Password:</label>
+      <input type="password" id="password" placeholder="Enter password (min 6 characters)" value="password123">
+    </div>
+    
+    <div class="form-group">
+      <label for="name">Name:</label>
+      <input type="text" id="name" placeholder="Enter name" value="Test User">
+    </div>
+    
+    <button id="register">Register User</button>
+    <button id="login">Login User</button>
+    <button id="test-write">Test Database Write</button>
+    <button id="logout">Logout User</button>
+    
+    <div id="result">Results will appear here...</div>
+  </div>
+
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/9.20.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.20.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.20.0/firebase-firestore-compat.js"></script>
+  
+  <script>
+    // Initialize Firebase with your config
+    const firebaseConfig = {
+      apiKey: "AIzaSyDgx9bKrdhSz5Z5IS9sG1mxGlVnbyJNRG4",
+      authDomain: "foodpanda-clone-7340c.firebaseapp.com",
+      projectId: "foodpanda-clone-7340c",
+      storageBucket: "foodpanda-clone-7340c.appspot.com",
+      messagingSenderId: "735457527905",
+      appId: "1:735457527905:web:08ae983fd213dc41b34220",
+      measurementId: "G-YLE16W2SZJ"
+    };
+    
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+    
+    // Get references to HTML elements
+    const emailInput = document.getElementById('email');
+    const passwordInput = document.getElementById('password');
+    const nameInput = document.getElementById('name');
+    const registerButton = document.getElementById('register');
+    const loginButton = document.getElementById('login');
+    const logoutButton = document.getElementById('logout');
+    const testWriteButton = document.getElementById('test-write');
+    const resultDiv = document.getElementById('result');
+    
+    // Log function
+    function log(message, type = 'info') {
+      const timestamp = new Date().toISOString().split('T')[1].slice(0, -1);
+      const prefix = type === 'error' ? '❌ ERROR' : type === 'success' ? '✅ SUCCESS' : 'ℹ️ INFO';
+      const formattedMessage = `[${timestamp}] ${prefix}: ${message}`;
+      
+      console.log(formattedMessage);
+      resultDiv.textContent += formattedMessage + '\n';
+      resultDiv.scrollTop = resultDiv.scrollHeight;
+      
+      if (type === 'error') {
+        resultDiv.style.borderColor = 'red';
+      } else if (type === 'success') {
+        resultDiv.style.borderColor = 'green';
+      }
+    }
+    
+    // Clear logs
+    function clearLogs() {
+      resultDiv.textContent = '';
+      resultDiv.style.borderColor = '#ddd';
+    }
+    
+    // Register user
+    registerButton.addEventListener('click', async () => {
+      clearLogs();
+      const email = emailInput.value.trim();
+      const password = passwordInput.value.trim();
+      const name = nameInput.value.trim();
+      
+      if (!email || !password || !name) {
+        log('Please fill in all fields', 'error');
+        return;
+      }
+      
+      if (password.length < 6) {
+        log('Password must be at least 6 characters', 'error');
+        return;
+      }
+      
+      try {
+        log(`Attempting to register user: ${email}`);
+        const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+        log(`User registered successfully with UID: ${userCredential.user.uid}`, 'success');
+        
+        // Update display name
+        await userCredential.user.updateProfile({
+          displayName: name
+        });
+        log('Profile updated with display name', 'success');
+        
+        // Store additional data in Firestore
+        try {
+          await db.collection('users').doc(userCredential.user.uid).set({
+            email,
+            name,
+            userType: 'customer',
+            createdAt: new Date().toISOString()
+          });
+          log('User data stored in Firestore', 'success');
+        } catch (firestoreError) {
+          log(`Firestore error: ${firestoreError.message}`, 'error');
+        }
+      } catch (error) {
+        log(`Registration error: ${error.message} (code: ${error.code})`, 'error');
+      }
+    });
+    
+    // Login user
+    loginButton.addEventListener('click', async () => {
+      clearLogs();
+      const email = emailInput.value.trim();
+      const password = passwordInput.value.trim();
+      
+      if (!email || !password) {
+        log('Please enter email and password', 'error');
+        return;
+      }
+      
+      try {
+        log(`Attempting to login user: ${email}`);
+        const userCredential = await auth.signInWithEmailAndPassword(email, password);
+        log(`User logged in successfully: ${userCredential.user.uid}`, 'success');
+        
+        // Try to get user data from Firestore
+        try {
+          const userDoc = await db.collection('users').doc(userCredential.user.uid).get();
+          if (userDoc.exists) {
+            log(`User data retrieved from Firestore: ${JSON.stringify(userDoc.data())}`, 'success');
+          } else {
+            log('User document not found in Firestore', 'error');
+          }
+        } catch (firestoreError) {
+          log(`Firestore error: ${firestoreError.message}`, 'error');
+        }
+      } catch (error) {
+        log(`Login error: ${error.message}`, 'error');
+      }
+    });
+    
+    // Test database write
+    testWriteButton.addEventListener('click', async () => {
+      clearLogs();
+      const user = auth.currentUser;
+      
+      if (!user) {
+        log('No user logged in. Please login first.', 'error');
+        return;
+      }
+      
+      try {
+        log('Testing Firestore write...');
+        const testData = {
+          test: 'Direct test write',
+          timestamp: new Date().toISOString(),
+          userId: user.uid
+        };
+        
+        // Write to a test collection
+        await db.collection('test_writes').add(testData);
+        log('Test write successful', 'success');
+        
+        // Try to read it back
+        const snapshot = await db.collection('test_writes')
+          .where('userId', '==', user.uid)
+          .orderBy('timestamp', 'desc')
+          .limit(1)
+          .get();
+        
+        if (!snapshot.empty) {
+          log(`Test data read back: ${JSON.stringify(snapshot.docs[0].data())}`, 'success');
+        } else {
+          log('Could not read back test data', 'error');
+        }
+      } catch (error) {
+        log(`Database test error: ${error.message}`, 'error');
+      }
+    });
+    
+    // Logout user
+    logoutButton.addEventListener('click', async () => {
+      clearLogs();
+      try {
+        await auth.signOut();
+        log('User logged out successfully', 'success');
+      } catch (error) {
+        log(`Logout error: ${error.message}`, 'error');
+      }
+    });
+    
+    // Check auth state on load
+    auth.onAuthStateChanged(user => {
+      if (user) {
+        log(`Currently logged in as: ${user.email} (${user.uid})`, 'info');
+      } else {
+        log('No user currently logged in', 'info');
+      }
+    });
+  </script>
+</body>
+</html> 

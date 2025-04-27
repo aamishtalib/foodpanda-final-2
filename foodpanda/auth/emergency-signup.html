@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Emergency Signup - Food Panda</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary-color: #d60f65;
+      --text-color: #333;
+      --border-color: #ddd;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+    
+    body {
+      background-color: #f9f9f9;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .signup-container {
+      display: flex;
+      max-width: 900px;
+      width: 100%;
+    }
+    
+    .left-panel {
+      flex: 1;
+      background-color: var(--primary-color);
+      padding: 40px;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      border-radius: 10px 0 0 10px;
+    }
+    
+    .right-panel {
+      flex: 1;
+      background-color: white;
+      padding: 30px;
+      border-radius: 0 10px 10px 0;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    
+    .logo {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    
+    .tagline {
+      font-size: 1.1rem;
+      margin-bottom: 40px;
+      text-align: center;
+    }
+    
+    .app-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+    }
+    
+    .app-button {
+      padding: 10px 15px;
+      background-color: rgba(255, 255, 255, 0.2);
+      color: white;
+      border-radius: 5px;
+      text-decoration: none;
+      transition: all 0.3s;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+    }
+    
+    .app-button i {
+      margin-right: 8px;
+    }
+    
+    .form-group {
+      margin-bottom: 15px;
+    }
+    
+    .form-row {
+      display: flex;
+      gap: 15px;
+    }
+    
+    .form-group label {
+      display: block;
+      margin-bottom: 5px;
+      font-size: 0.9rem;
+      color: #555;
+    }
+    
+    .form-control {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      font-size: 0.9rem;
+    }
+    
+    .form-control:focus {
+      outline: none;
+      border-color: var(--primary-color);
+    }
+    
+    .btn {
+      width: 100%;
+      padding: 10px;
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: 500;
+      margin-top: 10px;
+    }
+    
+    .login-link {
+      text-align: center;
+      margin-top: 15px;
+      font-size: 0.85rem;
+      color: #777;
+    }
+    
+    .login-link a {
+      color: var(--primary-color);
+      text-decoration: none;
+    }
+    
+    .note {
+      background-color: #f8f9fa;
+      border-left: 4px solid #28a745;
+      padding: 10px 15px;
+      margin: 20px 0;
+      font-size: 0.9rem;
+    }
+    
+    .note strong {
+      color: #28a745;
+    }
+    
+    @media (max-width: 768px) {
+      .signup-container {
+        flex-direction: column;
+        width: 90%;
+        max-width: 400px;
+      }
+      
+      .left-panel {
+        border-radius: 10px 10px 0 0;
+        padding: 30px 20px;
+      }
+      
+      .right-panel {
+        border-radius: 0 0 10px 10px;
+      }
+      
+      .form-row {
+        flex-direction: column;
+        gap: 15px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="signup-container">
+    <div class="left-panel">
+      <div class="logo">foodpanda</div>
+      <div class="tagline">Your favorite food, delivered fast to your door.</div>
+      <div class="app-buttons">
+        <a href="#" class="app-button">
+          <i class="fab fa-google-play"></i>
+          Google Play
+        </a>
+        <a href="#" class="app-button">
+          <i class="fab fa-apple"></i>
+          App Store
+        </a>
+      </div>
+    </div>
+    
+    <div class="right-panel">
+      <h2 style="margin-bottom: 20px; color: var(--primary-color); text-align: center;">Create Account</h2>
+      
+      <div class="note">
+        <strong>Emergency Signup:</strong> Use this page if you're having trouble with the regular signup process.
+      </div>
+      
+      <form id="emergency-signup-form">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="first-name">First Name</label>
+            <input type="text" id="first-name" class="form-control" placeholder="Enter first name" required>
+          </div>
+          <div class="form-group">
+            <label for="last-name">Last Name</label>
+            <input type="text" id="last-name" class="form-control" placeholder="Enter last name" required>
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label for="email">Email Address</label>
+          <input type="email" id="email" class="form-control" placeholder="Enter your email" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="phone">Phone Number</label>
+          <input type="tel" id="phone" class="form-control" placeholder="Enter your phone number">
+        </div>
+        
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" class="form-control" placeholder="Create a password (min. 6 characters)" required minlength="6">
+        </div>
+        
+        <div class="form-group">
+          <label for="confirm-password">Confirm Password</label>
+          <input type="password" id="confirm-password" class="form-control" placeholder="Confirm your password" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="user-type">I am a</label>
+          <select id="user-type" class="form-control">
+            <option value="customer">Customer</option>
+            <option value="admin">Restaurant Owner</option>
+          </select>
+        </div>
+        
+        <button type="button" class="btn" id="signup-button">Create Account</button>
+        
+        <div class="login-link">
+          Already have an account? <a href="login.html">Log In</a>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Get form elements
+      const form = document.getElementById('emergency-signup-form');
+      const firstNameInput = document.getElementById('first-name');
+      const lastNameInput = document.getElementById('last-name');
+      const emailInput = document.getElementById('email');
+      const phoneInput = document.getElementById('phone');
+      const passwordInput = document.getElementById('password');
+      const confirmPasswordInput = document.getElementById('confirm-password');
+      const userTypeSelect = document.getElementById('user-type');
+      const signupButton = document.getElementById('signup-button');
+      
+      // Add click event to signup button
+      signupButton.addEventListener('click', function() {
+        // Basic validation
+        if (!form.checkValidity()) {
+          alert('Please fill in all required fields');
+          return;
+        }
+        
+        const firstName = firstNameInput.value.trim();
+        const lastName = lastNameInput.value.trim();
+        const email = emailInput.value.trim();
+        const phone = phoneInput.value.trim();
+        const password = passwordInput.value.trim();
+        const confirmPassword = confirmPasswordInput.value.trim();
+        const userType = userTypeSelect.value;
+        
+        // Additional validation
+        if (password.length < 6) {
+          alert('Password must be at least 6 characters');
+          return;
+        }
+        
+        if (password !== confirmPassword) {
+          alert('Passwords do not match');
+          return;
+        }
+        
+        // Update button state
+        signupButton.textContent = 'Creating Account...';
+        signupButton.disabled = true;
+        
+        // Create user object
+        const newUser = {
+          id: 'user_' + Date.now().toString(),
+          email: email,
+          name: firstName + ' ' + lastName,
+          phone: phone || '',
+          userType: userType,
+          createdAt: new Date().toISOString()
+        };
+        
+        // Save user to localStorage
+        try {
+          // Save current user
+          localStorage.setItem('foodpanda_current_user', JSON.stringify(newUser));
+          
+          // Set session storage for cross-page persistence
+          sessionStorage.setItem('foodpanda_logged_in', 'true');
+          sessionStorage.setItem('foodpanda_user_type', userType);
+          
+          // Add to users collection
+          const users = JSON.parse(localStorage.getItem('foodpanda_users') || '[]');
+          users.push({...newUser, password: password});
+          localStorage.setItem('foodpanda_users', JSON.stringify(users));
+          
+          // Show success message
+          alert('Account created successfully! Click OK to go to your dashboard.');
+          
+          // Redirect to dashboard
+          window.location.href = '../customer/dashboard.html?registered=true';
+        } catch (error) {
+          console.error('Error creating account:', error);
+          alert('There was an error creating your account. Please try again.');
+          signupButton.textContent = 'Create Account';
+          signupButton.disabled = false;
+        }
+      });
+    });
+  </script>
+</body>
+</html> 

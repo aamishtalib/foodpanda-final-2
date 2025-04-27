@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Restaurants - Food Panda</title>
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <!-- Google Fonts - Poppins -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="../css/style.css">
+  <!-- App.js script - must be loaded before page scripts -->
+  <script src="../js/app.js"></script>
+  <script>
+    // Initialize foodPandaApp if it's not already available
+    window.foodPandaApp = window.foodPandaApp || {
+      getRestaurantsByCity: async function(city) {
+        try {
+          // Get restaurants from localStorage
+          const restaurants = JSON.parse(localStorage.getItem('foodpanda_restaurants') || '[]');
+          console.log(`Found ${restaurants.length} restaurants in localStorage`);
+          
+          // If city is specified, filter by city
+          if (city && city.trim() !== '') {
+            const cleanCity = city.toLowerCase().trim();
+            const filtered = restaurants.filter(r => 
+              r.city && r.city.toLowerCase().trim() === cleanCity
+            );
+            return { success: true, restaurants: filtered };
+          }
+          
+          // Otherwise return all restaurants
+          return { success: true, restaurants };
+        } catch (error) {
+          console.error('Error in getRestaurantsByCity:', error);
+          return { success: false, error: error.message, restaurants: [] };
+        }
+      },
+      showMessage: function(message, type) {
+        alert(message);
+      }
+    };
+  </script>
+  <style>
+    /* Restaurant header and additional styles */    
+    .restaurant-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+    
+    .search-sort {
+      display: flex;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+    
+    .search-container {
+      position: relative;
+    }
+    
+    .search-input {
+      padding: 10px 15px;
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      font-size: 1rem;
+      min-width: 250px;
+    }
+    
+    .search-icon {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--dark-gray);
+    }
+    
+    .sort-select {
+      padding: 10px 15px;
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      font-size: 1rem;
+      background-color: var(--light-color);
+    }
+    
+    .empty-state {
+      text-align: center;
+      padding: 50px 0;
+    }
+    
+    .empty-state i {
+      font-size: 4rem;
+      color: var(--dark-gray);
+      margin-bottom: 20px;
+    }
+    
+    .empty-state h3 {
+      font-size: 1.5rem;
+      margin-bottom: 10px;
+    }
+    
+    .empty-state p {
+      color: var(--dark-gray);
+    }
+    
+    /* Restaurant cards image styling */
+    .img-container {
+      width: 100%;
+      height: 180px;
+      overflow: hidden;
+      position: relative;
+      background-color: #f0f0f0;
+      border-top-left-radius: 8px;
+      border-top-right-radius: 8px;
+    }
+    
+    .restaurant-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.3s ease;
+    }
+    
+    .restaurant-card:hover .restaurant-img {
+      transform: scale(1.05);
+    }
+    
+    /* Style for restaurant cards */
+    .restaurant-card {
+      background-color: white;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      cursor: pointer;
+    }
+    
+    .restaurant-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+    }
+    
+    .restaurant-info {
+      padding: 15px;
+    }
+    
+    .restaurant-title {
+      margin: 0 0 10px;
+      font-size: 1.2rem;
+    }
+    
+    .restaurant-rating {
+      display: flex;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+    
+    .rating-stars {
+      color: #ff5a00;
+      margin-right: 5px;
+    }
+    
+    .restaurant-details {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.9rem;
+      color: var(--dark-gray);
+    }
+    
+    .restaurant-city {
+      text-transform: capitalize;
+    }
+    
+    /* Notification styles */
+    .cart-notification {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 15px 25px;
+      border-radius: 8px;
+      color: white;
+      background-color: #4CAF50;
+      z-index: 1000;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      animation: slideIn 0.3s ease-out;
+      display: none;
+    }
+    
+    .cart-notification.error {
+      background-color: #f44336;
+    }
+    
+    @keyframes slideIn {
+      from {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+    
+    /* Add cart icon and counter styles */
+    .cart-icon-container {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      z-index: 1000;
+    }
+    
+    .cart-btn {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background-color: #e91e63;
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 24px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+      transition: transform 0.3s ease;
+      text-decoration: none;
+    }
+    
+    .cart-btn:hover {
+      transform: scale(1.1);
+      background-color: #d81b60;
+    }
+    
+    .cart-counter {
+      position: absolute;
+      top: -5px;
+      right: -5px;
+      width: 25px;
+      height: 25px;
+      border-radius: 50%;
+      background-color: white;
+      color: #e91e63;
+      font-size: 14px;
+      font-weight: 600;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    }
+  </style>
+</head>
+<body>
+  <!-- Navbar -->
+  <header style="background-color: #e91e63; padding: 10px 0; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); position: sticky; top: 0; z-index: 1000;">
+    <div class="container" style="max-width: 1200px; margin: 0 auto; padding: 0 20px;">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <!-- Logo -->
+        <a href="../index.html" style="text-decoration: none; display: flex; align-items: center;">
+          <div style="background: white; width: 40px; height: 40px; border-radius: 5px; display: flex; align-items: center; justify-content: center;">
+            <img src="https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/3b/d9/1d/3bd91de1-ed93-1296-5d1d-b372fe382846/AppIcon-0-0-1x_U007ephone-0-1-0-85-220.png/1200x630wa.png" alt="Foodpanda" style="height: 35px; width: 35px; object-fit: contain;">
+          </div>
+          <span style="font-size: 24px; font-weight: 700; color: white; margin-left: 10px; font-family: 'Poppins', sans-serif;">foodpanda</span>
+        </a>
+        
+        <!-- Navigation Links -->
+        <div style="display: flex; align-items: center; gap: 20px;">
+          <nav>
+            <ul style="display: flex; list-style: none; margin: 0; padding: 0; gap: 30px;">
+              <li><a href="../index.html" style="color: white; text-decoration: none; font-weight: 500;">Home</a></li>
+              <li><a href="restaurants.html" style="color: white; text-decoration: none; font-weight: 500;">Restaurants</a></li>
+              <li><a href="dishes.html" style="color: white; text-decoration: none; font-weight: 500;">Dishes</a></li>
+              <li><a href="dashboard.html" style="color: white; text-decoration: none; font-weight: 500;">Dashboard</a></li>
+            </ul>
+          </nav>
+          
+          <!-- User & Cart -->
+          <div style="display: flex; align-items: center; gap: 20px;">
+            <a href="#" id="username" style="color: white; text-decoration: none; font-weight: 500;">Guest</a>
+            <a href="#" id="logout-link" style="color: white; text-decoration: none; font-weight: 500;">
+              <i class="fas fa-sign-out-alt"></i> Logout
+            </a>
+            <a href="cart.html" style="color: white; position: relative; text-decoration: none;">
+              <i class="fas fa-shopping-cart" style="font-size: 20px;"></i>
+              <span id="cart-count" style="position: absolute; top: -8px; right: -8px; background-color: white; color: #e91e63; width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold;">0</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Add a black bottom border under the header -->
+  <div style="height: 3px; background-color: #222; width: 100%;"></div>
+
+  <!-- Mobile Navigation -->
+  <div class="mobile-nav" style="display: none;">
+    <ul class="mobile-nav-links auth-links">
+      <li><a href="../index.html">Home</a></li>
+      <li><a href="restaurants.html" class="active">Restaurants</a></li>
+      <li><a href="dishes.html">Dishes</a></li>
+      <li><a href="../auth/login.html">Login</a></li>
+      <li><a href="../auth/signup.html">Sign Up</a></li>
+    </ul>
+    <ul class="mobile-nav-links user-links" style="display: none;">
+      <li><a href="../index.html">Home</a></li>
+      <li><a href="restaurants.html" class="active">Restaurants</a></li>
+      <li><a href="dishes.html">Dishes</a></li>
+      <li><a href="dashboard.html">Dashboard</a></li>
+      <li><a href="cart.html">Cart</a></li>
+      <li><a href="#" id="mobile-logout-link">Logout</a></li>
+    </ul>
+  </div>
+
+  <!-- Message Container for notifications -->
+  <div id="message-container"></div>
+
+  <!-- Location Selector -->
+  <div class="location-selector">
+    <div class="container">
+      <div class="location-wrapper">
+        <div class="animated-box box1"></div>
+        <div class="animated-box box2"></div>
+        <div class="location-content">
+          <div class="location-icon">
+            <i class="fas fa-map-marker-alt"></i>
+          </div>
+          <div class="location-select">
+            <label for="city-select">Delivering to</label>
+            <select id="city-select" class="city-dropdown">
+              <option value="">All Cities</option>
+              <option value="karachi">Karachi</option>
+              <option value="lahore">Lahore</option>
+              <option value="islamabad">Islamabad</option>
+              <option value="rawalpindi">Rawalpindi</option>
+              <option value="faisalabad">Faisalabad</option>
+              <option value="multan">Multan</option>
+              <option value="peshawar">Peshawar</option>
+              <option value="quetta">Quetta</option>
+            </select>
+          </div>
+        </div>
+        <div class="animated-box box3"></div>
+        <div class="animated-box box4"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Restaurants Section -->
+  <section>
+    <div class="container">
+      <!-- Restaurant header with search and sort -->
+      <div class="restaurant-header">
+        <h1>Restaurants</h1>
+        <div class="search-sort">
+          <div class="search-container">
+            <input type="text" id="search-input" class="search-input" placeholder="Search restaurants...">
+            <i class="fas fa-search search-icon"></i>
+          </div>
+          <select id="sort-select" class="sort-select">
+            <option value="default">Sort By</option>
+            <option value="rating">Rating (High to Low)</option>
+            <option value="a-z">Name (A to Z)</option>
+            <option value="z-a">Name (Z to A)</option>
+          </select>
+          <select id="city-select" class="sort-select">
+            <option value="">All Cities</option>
+            <option value="Karachi">Karachi</option>
+            <option value="Lahore">Lahore</option>
+            <option value="Islamabad">Islamabad</option>
+            <option value="Peshawar">Peshawar</option>
+            <option value="Quetta">Quetta</option>
+            <option value="Multan">Multan</option>
+            <option value="Faisalabad">Faisalabad</option>
+          </select>
+          <button id="reload-images" class="btn btn-sm">
+            <i class="fas fa-sync-alt"></i> Reload Images
+          </button>
+          <button id="create-restaurants" class="btn btn-sm btn-primary">
+            <i class="fas fa-plus"></i> Create Restaurants
+          </button>
+        </div>
+      </div>
+
+      <div id="restaurants-container" class="restaurant-grid">
+        <!-- Restaurants will be dynamically added here -->
+      </div>
+
+      <!-- Empty state (shown when no restaurants found) -->
+      <div id="empty-state" class="empty-state" style="display: none;">
+        <i class="fas fa-store-slash"></i>
+        <h3>No Restaurants Found</h3>
+        <p>Please try a different search term or check back later.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-column">
+          <h3>foodpanda</h3>
+          <p>Delivering food happiness to your doorstep.</p>
+        </div>
+        <div class="footer-column">
+          <h4>Quick Links</h4>
+          <ul>
+            <li><a href="../index.html">Home</a></li>
+            <li><a href="restaurants.html">Restaurants</a></li>
+            <li><a href="../auth/login.html">Login</a></li>
+            <li><a href="../auth/signup.html">Sign Up</a></li>
+            <li><a href="#" id="footer-reset-data">Reset Sample Data</a></li>
+          </ul>
+        </div>
+        <div class="footer-column">
+          <h4>Contact Us</h4>
+          <p>Email: support@foodpanda.com</p>
+          <p>Phone: +1 (555) 123-4567</p>
+        </div>
+        <div class="footer-column">
+          <h4>Follow Us</h4>
+          <div class="social-links">
+            <a href="#"><i class="fab fa-facebook-f"></i></a>
+            <a href="#"><i class="fab fa-twitter"></i></a>
+            <a href="#"><i class="fab fa-instagram"></i></a>
+            <a href="#"><i class="fab fa-linkedin-in"></i></a>
+          </div>
+        </div>
+      </div>
+      <div class="copyright">
+        <p>&copy; 2023 foodpanda. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- JavaScript -->
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
+  <!-- App JavaScript -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Logout functionality
+      const logoutLinks = [
+        document.getElementById('logout-link'),
+        document.getElementById('mobile-logout-link')
+      ];
+      
+      logoutLinks.forEach(link => {
+        if (link) {
+          link.addEventListener('click', async function(e) {
+            e.preventDefault();
+            
+            try {
+              await window.foodPandaApp.logoutUser();
+              window.foodPandaApp.showMessage('Logged out successfully!', 'success');
+              setTimeout(() => {
+                window.location.href = '../index.html';
+              }, 1500);
+            } catch (error) {
+              window.foodPandaApp.showMessage('An error occurred during logout.', 'error');
+              console.error(error);
+            }
+          });
+        }
+      });
+      
+      // Fix restaurant images before loading
+      forceUniqueRestaurantImages();
+      
+      // Add a reload button 
+      const header = document.querySelector('.restaurant-header');
+      if (header) {
+        const reloadBtn = document.createElement('button');
+        reloadBtn.className = 'btn btn-sm';
+        reloadBtn.innerHTML = '<i class="fas fa-sync-alt"></i> Reload Images';
+        reloadBtn.style.marginLeft = 'auto';
+        reloadBtn.addEventListener('click', () => {
+          forceUniqueRestaurantImages();
+          loadRestaurants();
+          window.foodPandaApp.showMessage('Reloading restaurant images...', 'info');
+        });
+        header.appendChild(reloadBtn);
+      }
+      
+      // Get references to DOM elements
+      const restaurantsContainer = document.getElementById('restaurants-container');
+      const emptyState = document.getElementById('empty-state');
+      const searchInput = document.getElementById('search-input');
+      const sortSelect = document.getElementById('sort-select');
+      const citySelect = document.getElementById('city-select');
+      
+      // Set city selector to the saved value
+      const savedCity = localStorage.getItem('foodpanda_selected_city');
+      if (savedCity) {
+        citySelect.value = savedCity;
+      }
+      
+      // Add event listener to city selector
+      citySelect.addEventListener('change', function() {
+        const selectedCity = this.value;
+        localStorage.setItem('foodpanda_selected_city', selectedCity);
+        if (selectedCity) {
+          window.foodPandaApp.showMessage(`Showing restaurants in ${citySelect.options[citySelect.selectedIndex].text}`, 'success');
+        } else {
+          window.foodPandaApp.showMessage('Showing restaurants from all cities', 'success');
+        }
+        loadRestaurants();
+      });
+      
+      // Reset data functionality
+      function resetSampleData() {
+        console.log('Resetting sample data...');
+        
+        // Clear previous sample data
+        localStorage.removeItem('foodpanda_restaurants');
+        localStorage.removeItem('foodpanda_categories');
+        localStorage.removeItem('foodpanda_menu_items');
+        localStorage.removeItem('foodpanda_users');
+        
+        window.foodPandaApp.showMessage('Sample data has been reset. Reloading page...', 'success');
+        
+        // Reload the page to reinitialize data
+        setTimeout(() => {
+          window.location.reload();
+        }, 1500);
+      }
+      
+      // Load and display restaurants
+      loadRestaurants();
+      
+      // Function to load restaurants
+      async function loadRestaurants() {
+        try {
+          // Get selected city
+          const selectedCity = localStorage.getItem('foodpanda_selected_city') || '';
+          
+          // Check if the function is available
+          if (!window.foodPandaApp || typeof window.foodPandaApp.getRestaurantsByCity !== 'function') {
+            console.error("Required function getRestaurantsByCity is not available");
+            window.foodPandaApp?.showMessage('Error: Restaurant loading function not available.', 'error');
+            
+            // Show error state
+            emptyState.style.display = 'block';
+            emptyState.innerHTML = `
+              <i class="fas fa-exclamation-circle" style="font-size: 3rem; color: var(--primary-color); margin-bottom: 20px;"></i>
+              <h3>Error Loading Restaurants</h3>
+              <p>Please refresh the page and try again.</p>
+              <button class="btn" style="margin-top: 20px;" onclick="window.location.reload()">Refresh Page</button>
+            `;
+            restaurantsContainer.innerHTML = '';
+            return;
+          }
+          
+          console.log(`Loading restaurants for city: "${selectedCity}"`);
+          
+          // Get restaurants by city
+          const result = await window.foodPandaApp.getRestaurantsByCity(selectedCity);
+          console.log('Restaurant loading result:', result);
+          
+          if (result && result.success) {
+            const restaurants = result.restaurants || [];
+            console.log(`Found ${restaurants.length} restaurants`);
+            
+            if (restaurants.length === 0) {
+              // Show empty state
+              emptyState.style.display = 'block';
+              emptyState.innerHTML = `
+                <i class="fas fa-store-slash" style="font-size: 3rem; color: var(--dark-gray); margin-bottom: 20px;"></i>
+                <h3>No Restaurants Found</h3>
+                <p>Please try a different search or location.</p>
+                <div style="display: flex; gap: 10px; justify-content: center; margin-top: 20px;">
+                  <button id="reset-city" class="btn">Show All Restaurants</button>
+                  <button id="reset-data" class="btn btn-outline">Reset Sample Data</button>
+                </div>
+              `;
+              restaurantsContainer.innerHTML = '';
+              
+              // Add event listener to the reset buttons
+              setTimeout(() => {
+                const resetButton = document.getElementById('reset-city');
+                if (resetButton) {
+                  resetButton.addEventListener('click', () => {
+                    citySelect.value = '';
+                    localStorage.removeItem('foodpanda_selected_city');
+                    window.foodPandaApp.showMessage('Showing all restaurants', 'success');
+                    loadRestaurants();
+                  });
+                }
+                
+                const resetDataButton = document.getElementById('reset-data');
+                if (resetDataButton) {
+                  resetDataButton.addEventListener('click', resetSampleData);
+                }
+              }, 0);
+            } else {
+              // Display restaurants
+              emptyState.style.display = 'none';
+              displayRestaurants(restaurants);
+            }
+          } else {
+            window.foodPandaApp.showMessage('Failed to load restaurants.', 'error');
+            console.error(result?.error || 'Unknown error');
+            
+            // Show error state
+            emptyState.style.display = 'block';
+            emptyState.innerHTML = `
+              <i class="fas fa-exclamation-circle" style="font-size: 3rem; color: var(--primary-color); margin-bottom: 20px;"></i>
+              <h3>Failed to Load Restaurants</h3>
+              <p>Please try again later.</p>
+              <button class="btn" style="margin-top: 20px;" onclick="loadRestaurants()">Retry</button>
+            `;
+            restaurantsContainer.innerHTML = '';
+          }
+        } catch (error) {
+          window.foodPandaApp?.showMessage('An error occurred while loading restaurants.', 'error');
+          console.error('Error loading restaurants:', error);
+          
+          // Show error state
+          emptyState.style.display = 'block';
+          emptyState.innerHTML = `
+            <i class="fas fa-exclamation-circle" style="font-size: 3rem; color: var(--primary-color); margin-bottom: 20px;"></i>
+            <h3>Error Loading Restaurants</h3>
+            <p>${error.message || 'Please try again later.'}</p>
+            <button class="btn" style="margin-top: 20px;" onclick="loadRestaurants()">Retry</button>
+          `;
+          restaurantsContainer.innerHTML = '';
+        }
+      }
+      
+      // Function to display restaurants
+      function displayRestaurants(restaurants) {
+        restaurantsContainer.innerHTML = '';
+        
+        restaurants.forEach(restaurant => {
+          const restaurantCard = document.createElement('div');
+          restaurantCard.className = 'restaurant-card';
+          
+          // Make sure image path is fixed with '../' prefix for fallback images
+          const imageUrl = restaurant.image || '../assets/a-journey-for-the-food.jpg';
+          // Fix image path if coming from assets (relative to current page)
+          const fixedImageUrl = imageUrl.includes('assets/') ? '../' + imageUrl : imageUrl;
+          
+          const cityInfo = restaurant.city ? `<span class="restaurant-city">${restaurant.city}</span>` : '';
+          
+          restaurantCard.innerHTML = `
+            <div class="img-container">
+              <img src="${fixedImageUrl}" alt="${restaurant.name}" class="restaurant-img" onerror="this.src='../assets/a-journey-for-the-food.jpg'">
+            </div>
+            <div class="restaurant-info">
+              <h3 class="restaurant-title">${restaurant.name}</h3>
+              <div class="restaurant-rating">
+                <span class="rating-stars">★★★★★</span>
+                <span>${restaurant.rating.toFixed(1)}</span>
+              </div>
+              <div class="restaurant-details">
+                <span>${restaurant.deliveryTime}</span>
+                ${cityInfo}
+              </div>
+            </div>
+          `;
+          
+          restaurantCard.addEventListener('click', function() {
+            window.location.href = `menu.html?id=${restaurant.id}`;
+          });
+          
+          restaurantsContainer.appendChild(restaurantCard);
+        });
+      }
+      
+      // Search functionality
+      searchInput.addEventListener('input', function() {
+        const searchText = this.value.toLowerCase();
+        filterRestaurants(searchText, sortSelect.value);
+      });
+      
+      // Sort functionality
+      sortSelect.addEventListener('change', function() {
+        filterRestaurants(searchInput.value.toLowerCase(), this.value);
+      });
+      
+      // Add event listener to footer reset data link
+      const footerResetDataLink = document.getElementById('footer-reset-data');
+      if (footerResetDataLink) {
+        footerResetDataLink.addEventListener('click', function(e) {
+          e.preventDefault();
+          resetSampleData();
+        });
+      }
+      
+      // Function to filter restaurants
+      async function filterRestaurants(searchText, sortBy) {
+        try {
+          // Get selected city
+          const selectedCity = localStorage.getItem('foodpanda_selected_city') || '';
+          
+          // Check if the function is available
+          if (!window.foodPandaApp || typeof window.foodPandaApp.getRestaurantsByCity !== 'function') {
+            console.error("Required function getRestaurantsByCity is not available");
+            return; // Don't show an error message here, as loadRestaurants would have already shown it
+          }
+          
+          // Get restaurants by city
+          const result = await window.foodPandaApp.getRestaurantsByCity(selectedCity);
+          
+          if (result && result.success) {
+            let restaurants = result.restaurants || [];
+            
+            // Filter by search text
+            if (searchText) {
+              restaurants = restaurants.filter(restaurant => 
+                restaurant.name.toLowerCase().includes(searchText)
+              );
+            }
+            
+            // Sort restaurants
+            if (sortBy === 'rating') {
+              restaurants.sort((a, b) => b.rating - a.rating);
+            } else if (sortBy === 'a-z') {
+              restaurants.sort((a, b) => a.name.localeCompare(b.name));
+            } else if (sortBy === 'z-a') {
+              restaurants.sort((a, b) => b.name.localeCompare(a.name));
+            }
+            
+            // Update UI
+            if (restaurants.length === 0) {
+              emptyState.style.display = 'block';
+              emptyState.innerHTML = `
+                <i class="fas fa-search" style="font-size: 3rem; color: var(--dark-gray); margin-bottom: 20px;"></i>
+                <h3>No Matching Restaurants</h3>
+                <p>Try a different search term or filter.</p>
+              `;
+              restaurantsContainer.innerHTML = '';
+            } else {
+              emptyState.style.display = 'none';
+              displayRestaurants(restaurants);
+            }
+          } else {
+            // If there's an error with the API, silently log it but don't update the UI
+            console.error("Filter failed:", result?.error || 'Unknown error');
+          }
+        } catch (error) {
+          // If there's an exception, silently log it but don't update the UI
+          console.error('Error filtering restaurants:', error);
+        }
+      }
+
+      // Add event listener to the create restaurants button
+      const createRestaurantsBtn = document.getElementById('create-restaurants');
+      if (createRestaurantsBtn) {
+        createRestaurantsBtn.addEventListener('click', function() {
+          createSampleRestaurants();
+        });
+      }
+
+      // Add event listener to the reload images button
+      const reloadImagesBtn = document.getElementById('reload-images');
+      if (reloadImagesBtn) {
+        reloadImagesBtn.addEventListener('click', function() {
+          forceUniqueRestaurantImages();
+          loadRestaurants();
+          window.foodPandaApp.showMessage('Reloading restaurant images...', 'info');
+        });
+      }
+
+      // Function to manually create sample restaurants
+      async function createSampleRestaurants() {
+        try {
+          // Sample restaurant data
+          const sampleRestaurants = [
+            {
+              id: 'restaurant_sample_' + Date.now() + '_1',
+              name: 'Karachi Biryani House',
+              description: 'Best biryani in town',
+              rating: 4.7,
+              deliveryTime: '25-40 min',
+              city: 'Karachi',
+              image: 'assets/images (1).jpg',
+              ownerId: 'default_owner',
+              createdAt: new Date().toISOString()
+            },
+            {
+              id: 'restaurant_sample_' + Date.now() + '_2',
+              name: 'Lahore Cuisine',
+              description: 'Authentic Lahori taste',
+              rating: 4.5,
+              deliveryTime: '30-45 min',
+              city: 'Lahore',
+              image: 'assets/images (2).jpg',
+              ownerId: 'default_owner',
+              createdAt: new Date().toISOString()
+            },
+            {
+              id: 'restaurant_sample_' + Date.now() + '_3',
+              name: 'Islamabad Grill',
+              description: 'Premium BBQ and grilled items',
+              rating: 4.8,
+              deliveryTime: '20-35 min',
+              city: 'Islamabad',
+              image: 'assets/images (3).jpg',
+              ownerId: 'default_owner',
+              createdAt: new Date().toISOString()
+            },
+            {
+              id: 'restaurant_sample_' + Date.now() + '_4',
+              name: 'Peshawar Chapli Kebab',
+              description: 'Famous chapli kebab from Peshawar',
+              rating: 4.6,
+              deliveryTime: '15-30 min',
+              city: 'Peshawar',
+              image: 'assets/images (4).jpg',
+              ownerId: 'default_owner',
+              createdAt: new Date().toISOString()
+            }
+          ];
+          
+          // Retrieve existing restaurants if any
+          let currentRestaurants = [];
+          try {
+            currentRestaurants = JSON.parse(localStorage.getItem('foodpanda_restaurants') || '[]');
+          } catch (e) {
+            console.error('Error parsing current restaurants:', e);
+          }
+          
+          // Add new sample restaurants
+          const updatedRestaurants = [...currentRestaurants, ...sampleRestaurants];
+          
+          // Save to localStorage
+          localStorage.setItem('foodpanda_restaurants', JSON.stringify(updatedRestaurants));
+          
+          window.foodPandaApp.showMessage('Sample restaurants created successfully!', 'success');
+          
+          // Reload restaurants
+          loadRestaurants();
+          
+        } catch (error) {
+          console.error('Error creating sample restaurants:', error);
+          window.foodPandaApp.showMessage('Failed to create sample restaurants', 'error');
+        }
+      }
+    });
+  </script>
+  
+  <script>
+    // Function to check and correct restaurant image paths
+    function ensureValidImagePaths() {
+      try {
+        const restaurants = JSON.parse(localStorage.getItem('foodpanda_restaurants') || '[]');
+        let hasUpdates = false;
+        
+        // List of available food images in assets
+        const availableImages = [
+          'assets/images (1).jpg',
+          'assets/images (2).jpg',
+          'assets/images (3).jpg',
+          'assets/images (4).jpg',
+          'assets/images (5).jpg',
+          'assets/images (6).jpg',
+          'assets/images (7).jpg',
+          'assets/images (8).jpg', 
+          'assets/images (9).jpg',
+          'assets/images (10).jpg',
+          'assets/images (11).jpg',
+          'assets/images (12).jpg',
+          'assets/images (13).jpg',
+          'assets/images (14).jpg',
+          'assets/images (15).jpg',
+          'assets/images (16).jpg',
+          'assets/images (17).jpg',
+          'assets/a-journey-for-the-food.jpg',
+          'assets/taj-mahal-restaurant.jpg',
+          'assets/20-Best-Restaurants-in-Pakistan-worth-visiting-f.webp',
+          'assets/self-service-pakistani-restaurant-indian-food-102859271.webp'
+        ];
+        
+        // Assign unique images to restaurants
+        restaurants.forEach((restaurant, index) => {
+          if (!restaurant.image || 
+              typeof restaurant.image !== 'string' || 
+              restaurant.image.startsWith('/') || 
+              !restaurant.image.includes('assets/')) {
+            
+            // Assign image based on restaurant ID to keep consistency
+            const imageIndex = parseInt(restaurant.id.replace(/\D/g, '')) % availableImages.length;
+            restaurant.image = availableImages[imageIndex];
+            hasUpdates = true;
+          }
+        });
+        
+        if (hasUpdates) {
+          localStorage.setItem('foodpanda_restaurants', JSON.stringify(restaurants));
+          console.log('Restaurant image paths fixed with unique images');
+        }
+      } catch (error) {
+        console.error('Error fixing image paths:', error);
+      }
+    }
+    
+    // Function to force each restaurant to have a unique image
+    function forceUniqueRestaurantImages() {
+      try {
+        const restaurants = JSON.parse(localStorage.getItem('foodpanda_restaurants') || '[]');
+        
+        // List of available food images in assets
+        const availableImages = [
+          'assets/images (1).jpg',
+          'assets/images (2).jpg',
+          'assets/images (3).jpg',
+          'assets/images (4).jpg',
+          'assets/images (5).jpg',
+          'assets/images (6).jpg',
+          'assets/images (7).jpg',
+          'assets/images (8).jpg', 
+          'assets/images (9).jpg',
+          'assets/images (10).jpg',
+          'assets/images (11).jpg',
+          'assets/images (12).jpg',
+          'assets/images (13).jpg',
+          'assets/images (14).jpg',
+          'assets/images (15).jpg',
+          'assets/images (16).jpg',
+          'assets/images (17).jpg',
+          'assets/taj-mahal-restaurant.jpg',
+          'assets/20-Best-Restaurants-in-Pakistan-worth-visiting-f.webp',
+          'assets/self-service-pakistani-restaurant-indian-food-102859271.webp',
+          'assets/a-journey-for-the-food.jpg'
+        ];
+        
+        // Assign unique images to each restaurant based on ID
+        restaurants.forEach(restaurant => {
+          const numericId = parseInt(restaurant.id.replace(/\D/g, '')) || 0;
+          const imageIndex = numericId % availableImages.length;
+          restaurant.image = availableImages[imageIndex];
+        });
+        
+        localStorage.setItem('foodpanda_restaurants', JSON.stringify(restaurants));
+        console.log('All restaurants now have unique images');
+        window.foodPandaApp.showMessage('Restaurants updated with unique images!', 'success');
+      } catch (error) {
+        console.error('Error setting unique images:', error);
+      }
+    }
+    
+    // Run when the page loads
+    document.addEventListener('DOMContentLoaded', () => {
+      forceUniqueRestaurantImages();
+    });
+  </script>
+</body>
+</html> 

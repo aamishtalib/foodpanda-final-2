@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FoodPanda Image Gallery</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
+    
+    body {
+      background-color: #f9f9f9;
+      padding: 20px;
+    }
+    
+    h1 {
+      color: #ff0080;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    
+    .gallery-item {
+      background-color: white;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s;
+    }
+    
+    .gallery-item:hover {
+      transform: translateY(-5px);
+    }
+    
+    .gallery-img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+    }
+    
+    .gallery-info {
+      padding: 15px;
+    }
+    
+    .gallery-title {
+      font-size: 16px;
+      margin-bottom: 5px;
+      color: #333;
+    }
+    
+    .gallery-path {
+      font-size: 12px;
+      color: #777;
+      word-break: break-all;
+    }
+    
+    .section-title {
+      font-size: 24px;
+      color: #333;
+      margin: 30px 0 20px;
+      text-align: center;
+    }
+    
+    .highlight {
+      border: 2px solid #ff0080;
+    }
+    
+    .new-badge {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background-color: #ff0080;
+      color: white;
+      font-size: 12px;
+      font-weight: bold;
+      padding: 5px 10px;
+      border-radius: 20px;
+      z-index: 1;
+    }
+    
+    .gallery-links {
+      text-align: center;
+      margin: 40px auto;
+      max-width: 600px;
+    }
+    
+    .gallery-links a {
+      display: inline-block;
+      background-color: #ff0080;
+      color: white;
+      text-decoration: none;
+      padding: 10px 20px;
+      border-radius: 30px;
+      margin: 0 10px 10px;
+      font-weight: 500;
+      transition: all 0.3s;
+    }
+    
+    .gallery-links a:hover {
+      background-color: #d70065;
+      transform: translateY(-3px);
+    }
+  </style>
+</head>
+<body>
+  <h1>FoodPanda Image Gallery</h1>
+  
+  <div class="gallery-links">
+    <a href="logo.html">View Logo Gallery</a>
+    <a href="app.html">View App Gallery</a>
+    <a href="mobile.html">View Mobile Interface</a>
+    <a href="app/foodpanda_app.html">View New App Showcase</a>
+  </div>
+  
+  <h2 class="section-title">Mobile App Images</h2>
+  <div class="gallery">
+    <div class="gallery-item" style="position: relative;">
+      <div class="new-badge">NEW!</div>
+      <img src="../images (10).jpg" alt="FoodPanda App on Pink Background" class="gallery-img highlight">
+      <div class="gallery-info">
+        <h3 class="gallery-title">FoodPanda App on Pink Background</h3>
+        <p class="gallery-path">assets/images (10).jpg</p>
+      </div>
+    </div>
+    
+    <div class="gallery-item" style="position: relative;">
+      <div class="new-badge">NEW!</div>
+      <img src="../images (3).jpg" alt="FoodPanda Mobile Interface" class="gallery-img highlight">
+      <div class="gallery-info">
+        <h3 class="gallery-title">FoodPanda Mobile Interface</h3>
+        <p class="gallery-path">assets/images (3).jpg</p>
+      </div>
+    </div>
+    
+    <div class="gallery-item">
+      <img src="../images (2).jpg" alt="FoodPanda App Screen" class="gallery-img">
+      <div class="gallery-info">
+        <h3 class="gallery-title">FoodPanda App Screen</h3>
+        <p class="gallery-path">assets/images (2).jpg</p>
+      </div>
+    </div>
+  </div>
+  
+  <h2 class="section-title">Food Images</h2>
+  <div class="gallery">
+    <div class="gallery-item">
+      <img src="../food-1050813_1280.jpg" alt="Food Image" class="gallery-img">
+      <div class="gallery-info">
+        <h3 class="gallery-title">Food Platter</h3>
+        <p class="gallery-path">assets/food-1050813_1280.jpg</p>
+      </div>
+    </div>
+    
+    <div class="gallery-item">
+      <img src="../a-journey-for-the-food.jpg" alt="Food Journey" class="gallery-img">
+      <div class="gallery-info">
+        <h3 class="gallery-title">Food Journey</h3>
+        <p class="gallery-path">assets/a-journey-for-the-food.jpg</p>
+      </div>
+    </div>
+    
+    <div class="gallery-item">
+      <img src="../images (1).jpg" alt="Food Image 1" class="gallery-img">
+      <div class="gallery-info">
+        <h3 class="gallery-title">Food Item 1</h3>
+        <p class="gallery-path">assets/images (1).jpg</p>
+      </div>
+    </div>
+    
+    <div class="gallery-item">
+      <img src="../images (5).jpg" alt="Food Image 5" class="gallery-img">
+      <div class="gallery-info">
+        <h3 class="gallery-title">Food Item 5</h3>
+        <p class="gallery-path">assets/images (5).jpg</p>
+      </div>
+    </div>
+  </div>
+  
+  <h2 class="section-title">Restaurant Images</h2>
+  <div class="gallery">
+    <div class="gallery-item">
+      <img src="../taj-mahal-restaurant.jpg" alt="Taj Mahal Restaurant" class="gallery-img">
+      <div class="gallery-info">
+        <h3 class="gallery-title">Taj Mahal Restaurant</h3>
+        <p class="gallery-path">assets/taj-mahal-restaurant.jpg</p>
+      </div>
+    </div>
+    
+    <div class="gallery-item">
+      <img src="../self-service-pakistani-restaurant-indian-food-102859271.webp" alt="Pakistani Restaurant" class="gallery-img">
+      <div class="gallery-info">
+        <h3 class="gallery-title">Pakistani Restaurant</h3>
+        <p class="gallery-path">assets/self-service-pakistani-restaurant-indian-food-102859271.webp</p>
+      </div>
+    </div>
+    
+    <div class="gallery-item">
+      <img src="../20-Best-Restaurants-in-Pakistan-worth-visiting-f.webp" alt="Best Restaurant in Pakistan" class="gallery-img">
+      <div class="gallery-info">
+        <h3 class="gallery-title">Best Restaurant in Pakistan</h3>
+        <p class="gallery-path">assets/20-Best-Restaurants-in-Pakistan-worth-visiting-f.webp</p>
+      </div>
+    </div>
+  </div>
+  
+  <h2 class="section-title">Banner Images</h2>
+  <div class="gallery">
+    <div class="gallery-item">
+      <img src="../banner.png" alt="Banner" class="gallery-img">
+      <div class="gallery-info">
+        <h3 class="gallery-title">Main Banner</h3>
+        <p class="gallery-path">assets/banner.png</p>
+      </div>
+    </div>
+  </div>
+</body>
+</html> 

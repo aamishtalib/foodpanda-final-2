@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard - foodpanda</title>
+  
+  <!-- Favicon -->
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23ff0080'/%3E%3Ccircle cx='50' cy='50' r='40' fill='white'/%3E%3Cpath d='M30 40 Q 40 25, 50 40' fill='%23ff0080'/%3E%3Ccircle cx='40' cy='40' r='3' fill='white'/%3E%3Cpath d='M70 40 Q 60 25, 50 40' fill='%23ff0080'/%3E%3Ccircle cx='60' cy='40' r='3' fill='white'/%3E%3Ccircle cx='50' cy='55' r='5' fill='%23ff0080'/%3E%3Cpath d='M40 65 Q 50 75, 60 65' fill='%23ff0080'/%3E%3C/svg%3E" type="image/svg+xml">
+  
+  <!-- Preconnect to external domains -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+  
+  <!-- CSS -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <link rel="stylesheet" href="../css/admin.css">
+  
+  <style>
+    /* Critical CSS for initial rendering */
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Poppins', sans-serif;
+      background-color: #f8f9fa;
+    }
+    
+    .admin-header {
+      background-color: white;
+      border-bottom: 1px solid #e1e1e1;
+      padding: 15px 0;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+    
+    .container {
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+    
+    .header-content {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    
+    .logo-section {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+    
+    .logo {
+      display: flex;
+      align-items: center;
+    }
+    
+    .dashboard-title {
+      font-size: 28px;
+      font-weight: 600;
+      color: #333;
+      margin-left: 20px;
+      position: relative;
+    }
+    
+    .dashboard-title:before {
+      content: "";
+      position: absolute;
+      left: -12px;
+      top: 50%;
+      transform: translateY(-50%);
+      height: 24px;
+      width: 2px;
+      background-color: #e1e1e1;
+    }
+  </style>
+</head>
+<body>
+  <!-- Admin Header -->
+  <header class="admin-header">
+    <div class="container">
+      <div class="header-content">
+        <div class="logo-section">
+          <div class="logo">
+            <a href="../index.html" style="display: flex; align-items: center; text-decoration: none;">
+              <div style="width: 40px; height: 40px; background-color: #ff0080; border-radius: 8px; display: flex; justify-content: center; align-items: center; margin-right: 8px;">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="30" height="30">
+                  <!-- Panda face -->
+                  <circle cx="50" cy="50" r="40" fill="white"/>
+                  <!-- Left eye -->
+                  <path d="M30 40 Q 40 25, 50 40" fill="#ff0080"/>
+                  <circle cx="40" cy="40" r="3" fill="white"/>
+                  <!-- Right eye -->
+                  <path d="M70 40 Q 60 25, 50 40" fill="#ff0080"/>
+                  <circle cx="60" cy="40" r="3" fill="white"/>
+                  <!-- Nose -->
+                  <circle cx="50" cy="55" r="5" fill="#ff0080"/>
+                  <!-- Mouth -->
+                  <path d="M40 65 Q 50 75, 60 65" fill="#ff0080"/>
+                </svg>
+              </div>
+              <span style="font-weight: 700; font-size: 24px; color: #ff0080;">
+                foodpanda
+              </span>
+            </a>
+          </div>
+          <h1 class="dashboard-title">Admin Dashboard</h1>
+        </div>
+        
+        <div class="admin-actions">
+          <button class="btn-primary"><i class="fas fa-plus"></i> Add Restaurant</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="admin-main">
+    <div class="container">
+      <div class="dashboard-grid">
+        <!-- Dashboard content will go here -->
+        <h2>Welcome to the Admin Dashboard</h2>
+        <p>Manage your restaurants, food items, and orders here.</p>
+      </div>
+    </div>
+  </main>
+
+  <!-- Scripts -->
+  <script src="../js/admin.js"></script>
+</body>
+</html> 

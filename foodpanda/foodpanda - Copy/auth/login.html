@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - Food Panda</title>
+  
+  <!-- Firebase SDK - Latest version that's compatible with the code -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
+  
+  <!-- Initialize Firebase with direct configuration -->
+  <script>
+    // Firebase initialization
+    document.addEventListener('DOMContentLoaded', function() {
+      // Initialize Firebase directly here
+      const firebaseConfig = {
+        apiKey: "AIzaSyDgx9bKrdhSz5Z5IS9sG1mxGlVnbyJNRG4",
+        authDomain: "foodpanda-clone-7340c.firebaseapp.com",
+        projectId: "foodpanda-clone-7340c",
+        storageBucket: "foodpanda-clone-7340c.appspot.com",
+        messagingSenderId: "735457527905",
+        appId: "1:735457527905:web:08ae983fd213dc41b34220",
+        measurementId: "G-YLE16W2SZJ"
+      };
+      
+      try {
+        if (typeof firebase !== 'undefined') {
+          // Initialize Firebase
+          if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+          }
+          console.log('Firebase initialized successfully in login page');
+          window.firebaseInitialized = true;
+          
+          // Test connection and permissions
+          const db = firebase.firestore();
+          db.collection('_test').doc('connection').set({
+            timestamp: new Date().toISOString(),
+            message: 'Firebase connection successful from login page'
+          })
+          .then(() => {
+            console.log('✅ Firebase connection test successful in login page');
+            document.dispatchEvent(new Event('firebase-ready'));
+          })
+          .catch(error => {
+            console.error('❌ Firebase connection test failed in login page:', error);
+            alert('Firebase connection error: ' + error.message);
+          });
+        } else {
+          console.error('Firebase SDK not loaded properly');
+          alert('Firebase SDK failed to load. Please check your internet connection and try again.');
+        }
+      } catch (error) {
+        console.error('Firebase initialization error:', error);
+        alert('Firebase initialization error: ' + error.message);
+      }
+    });
+  </script>
+  
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <!-- Google Fonts - Poppins -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="../css/style.css">
+  <style>
+    :root {
+      --primary-color: #e91e63;
+      --secondary-color: #f8f9fa;
+      --text-color: #333;
+      --border-color: #ddd;
+      --box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+    
+    body {
+      background-color: #f9f9f9;
+      background-image: linear-gradient(135deg, #f9f9f9 0%, #f5f5f5 100%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .login-container {
+      display: flex;
+      max-width: 900px;
+      width: 100%;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: var(--box-shadow);
+    }
+    
+    .left-panel {
+      flex: 1;
+      background: linear-gradient(145deg, #e91e63 0%, #d81b60 100%);
+      padding: 50px 40px;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .left-panel::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(rgba(255,255,255,0.1) 8%, transparent 8%);
+      background-position: 0 0;
+      background-size: 30px 30px;
+      transform: rotate(30deg);
+      z-index: 0;
+    }
+    
+    .right-panel {
+      flex: 1;
+      background-color: white;
+      padding: 40px;
+      position: relative;
+    }
+    
+    .logo {
+      font-size: 3rem;
+      font-weight: 700;
+      margin-bottom: 20px;
+      text-align: center;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+      z-index: 1;
+      position: relative;
+    }
+    
+    .tagline {
+      font-size: 1.2rem;
+      margin-bottom: 50px;
+      text-align: center;
+      opacity: 0.9;
+      line-height: 1.6;
+      z-index: 1;
+      position: relative;
+    }
+    
+    .app-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      z-index: 1;
+      position: relative;
+    }
+    
+    .app-button {
+      padding: 12px 18px;
+      background-color: rgba(255, 255, 255, 0.15);
+      color: white;
+      border-radius: 8px;
+      text-decoration: none;
+      transition: all 0.3s;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      backdrop-filter: blur(5px);
+    }
+    
+    .app-button:hover {
+      background-color: rgba(255, 255, 255, 0.25);
+      transform: translateY(-3px);
+    }
+    
+    .app-button i {
+      margin-right: 10px;
+      font-size: 1.2rem;
+    }
+    
+    .welcome-heading {
+      color: var(--primary-color);
+      font-size: 1.8rem;
+      margin-bottom: 30px;
+      text-align: center;
+      font-weight: 600;
+    }
+    
+    .form-group {
+      margin-bottom: 22px;
+    }
+    
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 0.9rem;
+      color: #555;
+      font-weight: 500;
+    }
+    
+    .form-control {
+      width: 100%;
+      padding: 14px;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      background-color: #f9f9f9;
+    }
+    
+    .form-control:focus {
+      outline: none;
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px rgba(233, 30, 99, 0.1);
+      background-color: #fff;
+    }
+    
+    .btn {
+      width: 100%;
+      padding: 15px;
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 1rem;
+      margin-top: 15px;
+      transition: all 0.3s;
+      box-shadow: 0 4px 10px rgba(233, 30, 99, 0.2);
+    }
+    
+    .btn:hover {
+      background-color: #d81b60;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 14px rgba(233, 30, 99, 0.25);
+    }
+    
+    .form-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 20px;
+      font-size: 0.9rem;
+      color: #666;
+    }
+    
+    .form-footer a {
+      color: var(--primary-color);
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.3s;
+    }
+    
+    .form-footer a:hover {
+      text-decoration: underline;
+    }
+    
+    .remember-me {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    
+    .remember-me input[type="checkbox"] {
+      accent-color: var(--primary-color);
+      width: 16px;
+      height: 16px;
+    }
+    
+    .signup-link {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 0.9rem;
+      color: #666;
+    }
+    
+    .signup-link a {
+      color: var(--primary-color);
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.3s;
+    }
+    
+    .signup-link a:hover {
+      text-decoration: underline;
+    }
+    
+    .loading-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(255,255,255,0.8);
+      backdrop-filter: blur(5px);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      visibility: hidden;
+      opacity: 0;
+      transition: all 0.3s;
+    }
+    
+    .loading-overlay.show {
+      visibility: visible;
+      opacity: 1;
+    }
+    
+    .loading-spinner {
+      display: inline-block;
+      width: 60px;
+      height: 60px;
+      border: 4px solid rgba(233, 30, 99, 0.2);
+      border-radius: 50%;
+      border-top-color: var(--primary-color);
+      animation: spin 1s ease-in-out infinite;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    .notification {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      max-width: 400px;
+      background-color: white;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      border-radius: 10px;
+      padding: 15px;
+      display: flex;
+      align-items: flex-start;
+      z-index: 1001;
+      overflow: hidden;
+      transition: all 0.3s;
+    }
+    
+    .notification-icon {
+      margin-right: 15px;
+      font-size: 1.5rem;
+    }
+    
+    .notification.success .notification-icon {
+      color: #28a745;
+    }
+    
+    .notification.error .notification-icon {
+      color: #dc3545;
+    }
+    
+    .notification-content {
+      flex: 1;
+    }
+    
+    .notification-title {
+      margin: 0 0 5px;
+      font-size: 1rem;
+      font-weight: 600;
+    }
+    
+    .notification-message {
+      margin: 0;
+      font-size: 0.9rem;
+      color: #666;
+    }
+    
+    .notification-close {
+      color: #aaa;
+      font-size: 0.8rem;
+      cursor: pointer;
+      padding: 5px;
+    }
+    
+    .notification-progress {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      height: 3px;
+      width: 100%;
+      background-color: var(--primary-color);
+    }
+    
+    @media (max-width: 768px) {
+      .login-container {
+        flex-direction: column;
+        width: 90%;
+        max-width: 450px;
+      }
+      
+      .left-panel {
+        border-radius: 12px 12px 0 0;
+        padding: 30px 20px;
+      }
+      
+      .right-panel {
+        border-radius: 0 0 12px 12px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <div class="left-panel">
+      <div class="logo">foodpanda</div>
+      <div class="tagline">Your favorite food, delivered fast to your doorstep.</div>
+      <div class="app-buttons">
+        <a href="#" class="app-button">
+          <i class="fab fa-google-play"></i>
+          Google Play
+        </a>
+        <a href="#" class="app-button">
+          <i class="fab fa-apple"></i>
+          App Store
+        </a>
+      </div>
+    </div>
+
+    <div class="right-panel">
+      <h2 class="welcome-heading">Welcome Back</h2>
+      <form id="login-form">
+        <div class="form-group">
+          <label for="email">Email Address</label>
+          <input type="email" id="email" class="form-control" placeholder="Enter your email">
+        </div>
+
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" class="form-control" placeholder="Enter your password">
+        </div>
+        
+        <button type="submit" class="btn">Log In</button>
+        
+        <div class="form-footer">
+          <div class="remember-me">
+            <input type="checkbox" id="remember-me">
+            <label for="remember-me">Remember me</label>
+          </div>
+          <a href="reset-password.html">Forgot password?</a>
+        </div>
+
+        <div class="signup-link">
+          Don't have an account? <a href="signup.html">Sign Up</a>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Loading Overlay -->
+  <div class="loading-overlay" id="loading-overlay">
+    <div class="loading-spinner"></div>
+  </div>
+  
+  <!-- Message Container for notifications -->
+  <div id="message-container"></div>
+
+  <!-- Load the app.js file after Firebase is initialized -->
+  <script src="../js/app.js"></script>
+  
+  <!-- Login form handling -->
+  <script>
+    // Initialize Firebase if needed
+    document.addEventListener('DOMContentLoaded', function() {
+      // Check if Firebase is already initialized
+      if (typeof firebase === 'undefined' || firebase.apps.length === 0) {
+        console.log('Firebase not initialized, initializing in login.html...');
+        // Firebase configuration
+        const firebaseConfig = {
+          apiKey: "AIzaSyDgx9bKrdhSz5Z5IS9sG1mxGlVnbyJNRG4",
+          authDomain: "foodpanda-clone-7340c.firebaseapp.com",
+          projectId: "foodpanda-clone-7340c",
+          storageBucket: "foodpanda-clone-7340c.appspot.com",
+          messagingSenderId: "735457527905",
+          appId: "1:735457527905:web:08ae983fd213dc41b34220",
+          measurementId: "G-YLE16W2SZJ"
+        };
+
+        // Initialize Firebase
+        try {
+          firebase.initializeApp(firebaseConfig);
+          console.log('Firebase initialized in login.html');
+        } catch (error) {
+          console.error('Error initializing Firebase:', error);
+        }
+      } else {
+        console.log('Firebase already initialized');
+      }
+      
+      console.log('DOM content loaded for login page');
+      
+      const loginForm = document.getElementById('login-form');
+      const emailInput = document.getElementById('email');
+      const passwordInput = document.getElementById('password');
+      const rememberMe = document.getElementById('remember-me');
+      const loadingOverlay = document.getElementById('loading-overlay');
+      const submitButton = loginForm.querySelector('button[type="submit"]');
+      
+      // Email validation function
+      function validateEmail(email) {
+        const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return re.test(email);
+      }
+      
+      // Show notification
+      function showNotification(message, type) {
+        const messageContainer = document.getElementById('message-container');
+        
+        const notification = document.createElement('div');
+        notification.className = `notification ${type}`;
+        
+        const icon = document.createElement('div');
+        icon.className = 'notification-icon';
+        
+        if (type === 'success') {
+          icon.innerHTML = '<i class="fas fa-check-circle"></i>';
+        } else if (type === 'error') {
+          icon.innerHTML = '<i class="fas fa-exclamation-circle"></i>';
+        } else {
+          icon.innerHTML = '<i class="fas fa-info-circle"></i>';
+        }
+        
+        const content = document.createElement('div');
+        content.className = 'notification-content';
+        
+        content.innerHTML = `
+          <h4 class="notification-title">${type === 'success' ? 'Success' : type === 'error' ? 'Error' : 'Information'}</h4>
+          <p class="notification-message">${message}</p>
+        `;
+        
+        const closeBtn = document.createElement('span');
+        closeBtn.className = 'notification-close';
+        closeBtn.innerHTML = '<i class="fas fa-times"></i>';
+        closeBtn.addEventListener('click', () => {
+          notification.remove();
+        });
+        
+        const progress = document.createElement('div');
+        progress.className = 'notification-progress';
+        
+        notification.appendChild(icon);
+        notification.appendChild(content);
+        notification.appendChild(closeBtn);
+        notification.appendChild(progress);
+        
+        messageContainer.appendChild(notification);
+        
+        // Auto-remove after 5 seconds
+        setTimeout(() => {
+          notification.style.opacity = '0';
+          notification.style.transform = 'translateX(100%)';
+          setTimeout(() => {
+            notification.remove();
+          }, 300);
+        }, 5000);
+        
+        // Animate progress bar
+        const totalTime = 5000;
+        const interval = 10;
+        let width = 100;
+        const step = 100 / (totalTime / interval);
+        
+        const timer = setInterval(() => {
+          width -= step;
+          progress.style.width = width + '%';
+          
+          if (width <= 0) {
+            clearInterval(timer);
+          }
+        }, interval);
+      }
+      
+      // Check for saved email
+      if (localStorage.getItem('rememberedEmail')) {
+        emailInput.value = localStorage.getItem('rememberedEmail');
+        rememberMe.checked = true;
+      }
+      
+      // Form submission
+      loginForm.addEventListener('submit', async function(event) {
+        event.preventDefault();
+        
+        // Get form values
+        const email = emailInput.value.trim();
+        const password = passwordInput.value.trim();
+        
+        // Validate form
+        if (!email || !password) {
+          showNotification('Please fill in all required fields', 'error');
+          return;
+        }
+        
+        if (!validateEmail(email)) {
+          showNotification('Please enter a valid email address', 'error');
+          return;
+        }
+        
+        // Show loading
+        loadingOverlay.classList.add('show');
+        submitButton.disabled = true;
+        const originalButtonText = submitButton.textContent;
+        submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Logging in...';
+        
+        try {
+          // Call the login function from app.js
+          const result = await window.foodPandaApp.loginUser(email, password);
+          
+          if (result.success) {
+            // Save email if remember me is checked
+            if (rememberMe.checked) {
+              localStorage.setItem('rememberedEmail', email);
+            } else {
+              localStorage.removeItem('rememberedEmail');
+            }
+            
+            // Ensure the user is properly stored in sessionStorage for cross-page persistence
+            sessionStorage.setItem('foodpanda_logged_in', 'true');
+            
+            // Store the user data in localStorage
+            const userToStore = {
+              id: result.user.uid || 'user_' + Date.now(),
+              email: email,
+              name: result.user.displayName || result.user.name || email.split('@')[0],
+              userType: result.user.userType,
+              createdAt: new Date().toISOString()
+            };
+            
+            // Save to localStorage
+            localStorage.setItem('foodpanda_current_user', JSON.stringify(userToStore));
+            sessionStorage.setItem('foodpanda_user_type', result.user.userType);
+            
+            console.log('User data stored in localStorage:', userToStore);
+            console.log('User type:', result.user.userType);
+            
+            showNotification('Login successful!', 'success');
+            
+            // Update UI
+            const userData = window.foodPandaApp.getCurrentUser();
+            window.foodPandaApp.updateAuthUI(userData);
+            
+            // Redirect based on user type after a short delay
+            // for persistent login state to be established
+            setTimeout(() => {
+              // Get the fresh user data to ensure we have the correct user type
+              const userType = result.user.userType;
+              console.log('Redirecting based on user type:', userType);
+              
+              if (userType === 'admin') {
+                console.log('Redirecting to admin dashboard');
+                window.location.href = '../admin/new-dashboard.html?login=success';
+              } else {
+                console.log('Redirecting to customer dashboard');
+                window.location.href = '../customer/dashboard.html?login=success';
+              }
+            }, 1500);
+          } else {
+            showNotification(result.error || 'Login failed. Please check your credentials.', 'error');
+          }
+        } catch (error) {
+          console.error('Login error:', error);
+          showNotification(error.message || 'An error occurred during login', 'error');
+        } finally {
+          // Hide loading
+          loadingOverlay.classList.remove('show');
+          submitButton.disabled = false;
+          submitButton.textContent = originalButtonText;
+        }
+      });
+    });
+  </script>
+</body>
+</html> 

@@ -1,0 +1,1253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - Foodpanda</title>
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <!-- Google Fonts - Poppins -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="../css/style.css">
+  <style>
+    :root {
+      --primary-color: #ff0080;
+      --secondary-color: #f8f9fa;
+      --text-color: #333;
+      --light-grey: #f0f0f0;
+      --border-color: #ddd;
+    }
+    
+    body {
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: var(--secondary-color);
+    }
+    
+    /* Navbar styles */
+    .navbar {
+      background-color: white;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      padding: 15px 0;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+    
+    .navbar-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .logo {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--primary-color);
+      text-decoration: none;
+    }
+    
+    .nav-links {
+      display: flex;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      gap: 25px;
+    }
+    
+    .nav-links li a {
+      color: var(--text-color);
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.3s;
+    }
+    
+    .nav-links li a:hover {
+      color: var(--primary-color);
+    }
+    
+    .user-menu {
+      display: flex;
+      align-items: center;
+      gap: 25px;
+    }
+    
+    .user-menu a {
+      color: var(--text-color);
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.3s;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    
+    .user-menu a:hover {
+      color: var(--primary-color);
+    }
+    
+    .cart-icon {
+      position: relative;
+      font-size: 24px;
+      color: var(--primary-color);
+    }
+    
+    .cart-count {
+      position: absolute;
+      top: -10px;
+      right: -10px;
+      background-color: var(--primary-color);
+      color: white;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 12px;
+      font-weight: bold;
+    }
+    
+    /* Welcome section */
+    .welcome-section {
+      padding: 30px 0;
+      border-bottom: 1px solid var(--border-color);
+    }
+    
+    .welcome-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .welcome-text h1 {
+      font-size: 24px;
+      font-weight: 600;
+      color: var(--text-color);
+      margin: 0 0 10px 0;
+    }
+    
+    .welcome-text p {
+      font-size: 16px;
+      color: #666;
+      margin: 0;
+    }
+    
+    .browse-btn {
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 12px 20px;
+      font-size: 16px;
+      font-weight: 500;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: background-color 0.3s;
+    }
+    
+    .browse-btn:hover {
+      background-color: #e0006f;
+    }
+    
+    /* Tab Navigation */
+    .tab-navigation {
+      background-color: white;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      margin-bottom: 30px;
+    }
+    
+    .tab-links {
+      display: flex;
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      border-bottom: 1px solid var(--border-color);
+    }
+    
+    .tab-link {
+      padding: 15px 25px;
+      cursor: pointer;
+      color: var(--text-color);
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      position: relative;
+      transition: color 0.3s;
+    }
+    
+    .tab-link:hover {
+      color: var(--primary-color);
+    }
+    
+    .tab-link.active {
+      color: var(--primary-color);
+    }
+    
+    .tab-link.active::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background-color: var(--primary-color);
+    }
+    
+    /* Recent Orders section */
+    .recent-orders {
+      background-color: white;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      padding: 20px;
+    }
+    
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    
+    .section-title {
+      font-size: 24px;
+      font-weight: 600;
+      color: var(--text-color);
+      margin-bottom: 5px;
+    }
+    
+    .view-all {
+      color: var(--primary-color);
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 14px;
+    }
+    
+    .view-all:hover {
+      text-decoration: underline;
+    }
+    
+    /* Grid Layout */
+    .orders-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
+      padding: 20px 0;
+    }
+    
+    .order-card {
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .order-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+    }
+    
+    .order-image {
+      height: 200px;
+      overflow: hidden;
+      position: relative;
+    }
+    
+    .order-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    
+    .order-info {
+      padding: 15px;
+    }
+    
+    .order-name {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: var(--text-color);
+    }
+    
+    .order-detail {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+    
+    .detail-label {
+      color: #666;
+      font-size: 14px;
+    }
+    
+    .detail-value {
+      font-weight: 500;
+      color: var(--text-color);
+      font-size: 14px;
+    }
+    
+    .order-description {
+      color: #666;
+      font-size: 14px;
+      margin-bottom: 15px;
+    }
+    
+    .actions {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      display: flex;
+      gap: 8px;
+    }
+    
+    .action-btn {
+      width: 35px;
+      height: 35px;
+      border-radius: 50%;
+      background: white;
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    }
+    
+    .action-btn:hover {
+      transform: scale(1.1);
+    }
+    
+    .favorite-btn {
+      color: var(--primary-color);
+    }
+    
+    .add-to-cart-btn {
+      color: #333;
+    }
+    
+    .reorder-btn {
+      display: block;
+      width: 100%;
+      padding: 10px;
+      background: var(--primary-color);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+    
+    .reorder-btn:hover {
+      background: #e0006f;
+    }
+    
+    .page-title {
+      font-size: 28px;
+      font-weight: 600;
+      margin-bottom: 20px;
+      color: var(--text-color);
+    }
+    
+    /* Responsive styles */
+    @media (max-width: 992px) {
+      .reorder-grid {
+        overflow-x: auto;
+        padding-bottom: 15px;
+      }
+      
+      .reorder-card {
+        min-width: 200px;
+      }
+    }
+    
+    @media (max-width: 768px) {
+      .welcome-container {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 20px;
+      }
+      
+      .tab-links {
+        overflow-x: auto;
+        white-space: nowrap;
+      }
+      
+      .tab-link {
+        padding: 15px 15px;
+      }
+    }
+    
+    /* Add cart icon and counter styles */
+    .cart-icon-container {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      z-index: 1000;
+    }
+    
+    .cart-btn {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background-color: #e91e63;
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 24px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+      transition: transform 0.3s ease;
+      text-decoration: none;
+    }
+    
+    .cart-btn:hover {
+      transform: scale(1.1);
+      background-color: #d81b60;
+    }
+    
+    .cart-counter {
+      position: absolute;
+      top: -5px;
+      right: -5px;
+      width: 25px;
+      height: 25px;
+      border-radius: 50%;
+      background-color: white;
+      color: #e91e63;
+      font-size: 14px;
+      font-weight: 600;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    }
+    
+    /* Add count animation */
+    @keyframes countAnimation {
+      0% { transform: scale(1.5); opacity: 0; }
+      20% { transform: scale(1); opacity: 1; }
+      80% { transform: scale(1); opacity: 1; }
+      100% { transform: scale(1.5); opacity: 0; }
+    }
+    
+    /* Notification popup - Small and discrete */
+    .notification-popup {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 12px 16px;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 500;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.16);
+      z-index: 9999;
+      max-width: 250px;
+    }
+    
+    .notification-popup.success {
+      background-color: #4CAF50;
+      color: white;
+    }
+    
+    .notification-popup.error {
+      background-color: #f44336;
+      color: white;
+    }
+    
+    /* Footer styles */
+    .footer {
+      background-color: #333;
+      color: #fff;
+      padding: 40px 0 20px;
+      margin-top: 50px;
+    }
+    
+    .footer-content {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      margin-bottom: 30px;
+    }
+    
+    .footer-logo a {
+      font-size: 24px;
+      font-weight: 700;
+      color: #fff;
+      text-decoration: none;
+    }
+    
+    .footer-links ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    
+    .footer-links ul li {
+      margin-bottom: 10px;
+    }
+    
+    .footer-links ul li a {
+      color: #ccc;
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+    
+    .footer-links ul li a:hover {
+      color: #e91e63;
+    }
+    
+    .footer-social {
+      display: flex;
+      gap: 15px;
+    }
+    
+    .footer-social a {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      background-color: rgba(255, 255, 255, 0.1);
+      border-radius: 50%;
+      color: #fff;
+      text-decoration: none;
+      transition: background-color 0.3s;
+    }
+    
+    .footer-social a:hover {
+      background-color: #e91e63;
+    }
+    
+    .footer-bottom {
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      padding-top: 20px;
+      text-align: center;
+    }
+    
+    .footer-bottom p {
+      margin: 0;
+      color: #ccc;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <!-- Navbar -->
+  <header style="background-color: #e91e63; padding: 15px 0; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); position: sticky; top: 0; z-index: 1000;">
+    <div class="container" style="max-width: 1200px; margin: 0 auto; padding: 0 20px;">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <!-- Logo -->
+        <a href="../index.html" style="text-decoration: none; display: flex; align-items: center; gap: 12px;">
+          <div style="background: white; width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            <img src="https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/3b/d9/1d/3bd91de1-ed93-1296-5d1d-b372fe382846/AppIcon-0-0-1x_U007ephone-0-1-0-85-220.png/1200x630wa.png" alt="Foodpanda" style="height: 40px; width: 40px; object-fit: contain; border-radius: 10px;">
+          </div>
+          <span style="font-size: 26px; font-weight: 600; color: white; font-family: 'Poppins', sans-serif;">foodpanda</span>
+        </a>
+        
+        <!-- Right Side: Nav + Auth -->
+        <div style="display: flex; align-items: center; gap: 30px;">
+          <!-- Navigation Menu -->
+          <nav style="margin-right: 30px;">
+            <ul style="display: flex; list-style: none; margin: 0; padding: 0; gap: 30px;">
+              <li><a href="../index.html" style="color: white; font-weight: 500; text-decoration: none; font-size: 15px;">Home</a></li>
+              <li><a href="restaurants.html" style="color: white; font-weight: 500; text-decoration: none; font-size: 15px;">Restaurants</a></li>
+              <li><a href="dishes.html" style="color: white; font-weight: 500; text-decoration: none; font-size: 15px;">Dishes</a></li>
+              <li><a href="dashboard.html" style="color: white; font-weight: 500; text-decoration: none; font-size: 15px;">Dashboard</a></li>
+      </ul>
+          </nav>
+          
+          <!-- User Menu -->
+          <div style="display: flex; align-items: center; gap: 20px;">
+            <a href="#" id="username" style="color: white; text-decoration: none; font-weight: 500; font-size: 15px;">aamish</a>
+            <a href="#" id="logout-btn" style="color: white; text-decoration: none; font-weight: 500; font-size: 15px;">
+              <i class="fas fa-sign-out-alt"></i> Logout
+            </a>
+            <a href="cart.html" style="color: white; position: relative; text-decoration: none; margin-left: 10px;">
+              <i class="fas fa-shopping-cart" style="font-size: 20px;"></i>
+              <span id="cart-count" style="position: absolute; top: -8px; right: -8px; background-color: white; color: #e91e63; width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold;">0</span>
+        </a>
+      </div>
+    </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Add a black bottom border under the header -->
+  <div style="height: 3px; background-color: #222; width: 100%;"></div>
+  
+  <!-- Welcome Section -->
+  <section class="welcome-section">
+    <div class="container welcome-container">
+      <div class="welcome-text">
+        <h1>Welcome to your Dashboard, <span id="welcome-username">aamish</span>!</h1>
+        <p>Manage your orders, favorites, and account settings.</p>
+      </div>
+      <a href="dishes.html" class="browse-btn">
+        <i class="fas fa-utensils"></i>
+        Browse Dishes
+      </a>
+    </div>
+  </section>
+  
+  <!-- Dashboard Content -->
+  <section class="container" style="padding: 30px 0;">
+    <h2 style="margin-bottom: 20px; font-size: 24px; color: #333;">Dashboard</h2>
+    
+    <!-- Recent Orders -->
+    <div class="recent-orders">
+      <div class="section-header">
+        <h2 class="section-title">Recent Orders</h2>
+        <a href="orders.html" class="view-all">View All</a>
+        </div>
+        
+      <div class="orders-grid">
+        <!-- Order Card 1 - Margherita Pizza -->
+        <div class="order-card" data-name="Margherita Pizza" data-price="1500" data-category="Pizza">
+          <div class="order-image">
+            <img src="https://images.unsplash.com/photo-1604382355076-af4b0eb60143?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Pizza">
+            <div class="actions">
+              <button class="action-btn favorite-btn"><i class="far fa-heart"></i></button>
+    </div>
+          </div>
+          <div class="order-info">
+            <h3 class="order-name">Margherita Pizza</h3>
+            <div class="order-detail">
+              <span class="detail-label">Price:</span>
+              <span class="detail-value price">PKR 1500</span>
+            </div>
+            <div class="order-detail">
+              <span class="detail-label">Category:</span>
+              <span class="detail-value">Pizza</span>
+            </div>
+            <button class="reorder-btn add-cart-btn" data-id="pizza1" data-name="Margherita Pizza" data-price="1500">
+              <i class="fas fa-shopping-cart"></i> Add to Cart
+            </button>
+          </div>
+        </div>
+        
+        <!-- Order Card 2 - Double Cheese Burger -->
+        <div class="order-card" data-name="Double Cheese Burger" data-price="800" data-category="Burger">
+          <div class="order-image">
+            <img src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Burger">
+            <div class="actions">
+              <button class="action-btn favorite-btn"><i class="far fa-heart"></i></button>
+        </div>
+      </div>
+          <div class="order-info">
+            <h3 class="order-name">Double Cheese Burger</h3>
+            <div class="order-detail">
+              <span class="detail-label">Date:</span>
+              <span class="detail-value">Oct 14, 2023</span>
+    </div>
+            <div class="order-detail">
+              <span class="detail-label">Total:</span>
+              <span class="detail-value price">PKR 800</span>
+            </div>
+            <button class="reorder-btn add-cart-btn" data-id="burger1" data-name="Double Cheese Burger" data-price="800">
+              <i class="fas fa-shopping-cart"></i> Add to Cart
+            </button>
+          </div>
+        </div>
+
+        <!-- Order Card 3 - Alfredo Pasta -->
+        <div class="order-card" data-name="Alfredo Pasta" data-price="1200" data-category="Pasta">
+          <div class="order-image">
+            <img src="https://images.unsplash.com/photo-1563379926898-05f4575a45d8?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Pasta">
+            <div class="actions">
+              <button class="action-btn favorite-btn"><i class="far fa-heart"></i></button>
+    </div>
+          </div>
+          <div class="order-info">
+            <h3 class="order-name">Alfredo Pasta</h3>
+            <div class="order-detail">
+              <span class="detail-label">Date:</span>
+              <span class="detail-value">Oct 13, 2023</span>
+            </div>
+            <div class="order-detail">
+              <span class="detail-label">Total:</span>
+              <span class="detail-value price">PKR 1200</span>
+            </div>
+            <button class="reorder-btn add-cart-btn" data-id="pasta1" data-name="Alfredo Pasta" data-price="1200">
+              <i class="fas fa-shopping-cart"></i> Add to Cart
+            </button>
+          </div>
+        </div>
+
+        <!-- Order Card 4 - Sushi -->
+        <div class="order-card">
+          <div class="order-image">
+            <img src="https://images.unsplash.com/photo-1579871494447-9811cf80d66c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Sushi">
+            <div class="actions">
+              <button class="action-btn favorite-btn"><i class="far fa-heart"></i></button>
+            </div>
+          </div>
+          <div class="order-info">
+            <h3 class="order-name">Salmon Sushi Roll</h3>
+            <div class="order-detail">
+              <span class="detail-label">Date:</span>
+              <span class="detail-value">Oct 12, 2023</span>
+            </div>
+            <div class="order-detail">
+              <span class="detail-label">Total:</span>
+              <span class="detail-value">PKR 2000</span>
+            </div>
+            <button class="reorder-btn">
+              <i class="fas fa-shopping-cart"></i> Add to Cart
+            </button>
+          </div>
+      </div>
+      
+        <!-- Order Card 5 - Biryani -->
+        <div class="order-card">
+          <div class="order-image">
+            <img src="https://images.unsplash.com/photo-1589302168068-964664d93dc0?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Biryani">
+            <div class="actions">
+              <button class="action-btn favorite-btn"><i class="far fa-heart"></i></button>
+      </div>
+    </div>
+          <div class="order-info">
+            <h3 class="order-name">Chicken Biryani</h3>
+            <div class="order-detail">
+              <span class="detail-label">Date:</span>
+              <span class="detail-value">Oct 11, 2023</span>
+            </div>
+            <div class="order-detail">
+              <span class="detail-label">Total:</span>
+              <span class="detail-value">PKR 600</span>
+            </div>
+            <button class="reorder-btn">
+              <i class="fas fa-shopping-cart"></i> Add to Cart
+            </button>
+          </div>
+        </div>
+
+        <!-- Order Card 6 - Ice Cream -->
+        <div class="order-card">
+          <div class="order-image">
+            <img src="https://images.unsplash.com/photo-1563805042-7684c019e1cb?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Ice Cream">
+            <div class="actions">
+              <button class="action-btn favorite-btn"><i class="far fa-heart"></i></button>
+            </div>
+          </div>
+          <div class="order-info">
+            <h3 class="order-name">Mixed Berry Sundae</h3>
+            <div class="order-detail">
+              <span class="detail-label">Date:</span>
+              <span class="detail-value">Oct 10, 2023</span>
+            </div>
+            <div class="order-detail">
+              <span class="detail-label">Total:</span>
+              <span class="detail-value">PKR 450</span>
+            </div>
+            <button class="reorder-btn">
+              <i class="fas fa-shopping-cart"></i> Add to Cart
+            </button>
+          </div>
+        </div>
+
+        <!-- Order Card 7 - Salad -->
+        <div class="order-card">
+          <div class="order-image">
+            <img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Salad">
+            <div class="actions">
+              <button class="action-btn favorite-btn"><i class="far fa-heart"></i></button>
+            </div>
+          </div>
+          <div class="order-info">
+            <h3 class="order-name">Greek Salad</h3>
+            <div class="order-detail">
+              <span class="detail-label">Date:</span>
+              <span class="detail-value">Oct 9, 2023</span>
+            </div>
+            <div class="order-detail">
+              <span class="detail-label">Total:</span>
+              <span class="detail-value">PKR 550</span>
+            </div>
+            <button class="reorder-btn">
+              <i class="fas fa-shopping-cart"></i> Add to Cart
+            </button>
+          </div>
+        </div>
+
+        <!-- Order Card 8 - Noodles -->
+        <div class="order-card">
+          <div class="order-image">
+            <img src="https://images.unsplash.com/photo-1555126634-323283e090fa?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Noodles">
+            <div class="actions">
+              <button class="action-btn favorite-btn"><i class="far fa-heart"></i></button>
+            </div>
+          </div>
+          <div class="order-info">
+            <h3 class="order-name">Chicken Noodles</h3>
+            <div class="order-detail">
+              <span class="detail-label">Date:</span>
+              <span class="detail-value">Oct 8, 2023</span>
+            </div>
+            <div class="order-detail">
+              <span class="detail-label">Total:</span>
+              <span class="detail-value">PKR 700</span>
+            </div>
+            <button class="reorder-btn">
+              <i class="fas fa-shopping-cart"></i> Add to Cart
+            </button>
+          </div>
+        </div>
+
+        <!-- Order Card 9 - Dessert -->
+        <div class="order-card">
+          <div class="order-image">
+            <img src="https://images.unsplash.com/photo-1563805042-7684c019e1cb?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Dessert">
+            <div class="actions">
+              <button class="action-btn favorite-btn"><i class="far fa-heart"></i></button>
+            </div>
+          </div>
+          <div class="order-info">
+            <h3 class="order-name">Chocolate Cake</h3>
+            <div class="order-detail">
+              <span class="detail-label">Date:</span>
+              <span class="detail-value">Oct 7, 2023</span>
+            </div>
+            <div class="order-detail">
+              <span class="detail-label">Total:</span>
+              <span class="detail-value">PKR 650</span>
+            </div>
+            <button class="reorder-btn">
+              <i class="fas fa-shopping-cart"></i> Add to Cart
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-logo">
+          <a href="#">foodpanda</a>
+        </div>
+        <div class="footer-links">
+          <ul>
+            <li><a href="#">About Us</a></li>
+            <li><a href="#">Contact Us</a></li>
+            <li><a href="#">Terms & Conditions</a></li>
+            <li><a href="#">Privacy Policy</a></li>
+          </ul>
+        </div>
+        <div class="footer-social">
+          <a href="#"><i class="fab fa-facebook-f"></i></a>
+          <a href="#"><i class="fab fa-twitter"></i></a>
+          <a href="#"><i class="fab fa-instagram"></i></a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2023 foodpanda. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+  
+  <!-- Add floating cart button -->
+  <div class="cart-icon-container">
+    <a href="cart.html" class="cart-btn">
+      <i class="fas fa-shopping-cart"></i>
+      <span class="cart-counter">0</span>
+    </a>
+  </div>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Update cart counter on page load
+      updateCartCounter();
+      
+      // Setup favorite buttons
+      setupFavoriteButtons();
+      
+      // Remove any admin-only elements that might be present
+      document.querySelectorAll('.admin-only').forEach(element => {
+        element.remove();
+      });
+      
+      // Check if user is an admin, and redirect if needed
+      try {
+        const userData = localStorage.getItem('foodpanda_current_user');
+        if (userData) {
+          const user = JSON.parse(userData);
+          
+          // If user is an admin and trying to access customer dashboard, redirect to admin dashboard
+          if (user.userType === 'admin') {
+            window.location.href = '../admin/dashboard.html';
+            return;
+          }
+          
+          // Update username display
+          const userName = document.getElementById('welcome-username');
+          const username = document.getElementById('username');
+          if (userName) userName.textContent = user.name;
+          if (username) username.textContent = user.name;
+      } else {
+          // Not logged in, redirect to login
+          window.location.href = '../auth/login.html';
+          return;
+        }
+      } catch (error) {
+        console.error('Error processing user data:', error);
+      }
+      
+      // Set up event listeners for add to cart buttons
+      document.querySelectorAll('.add-cart-btn, .reorder-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+          try {
+            // Try to get data from data attributes first (more reliable)
+            let itemName, price, imageUrl;
+            
+            if (this.dataset.name && this.dataset.price) {
+              // Use data attributes if available
+              itemName = this.dataset.name;
+              price = parseInt(this.dataset.price);
+              
+              // Get image from the parent card
+              const orderCard = this.closest('.order-card');
+              const imageElement = orderCard?.querySelector('img');
+              imageUrl = imageElement?.src || '';
+            } else {
+              // Fallback to extracting from HTML structure
+              const orderCard = this.closest('.order-card');
+              if (!orderCard) {
+                throw new Error('Could not find parent order card');
+              }
+              
+              itemName = orderCard.querySelector('.order-name')?.textContent || 'Food Item';
+              imageUrl = orderCard.querySelector('img')?.src || '';
+              
+              // Try to get price from card data attribute first
+              if (orderCard.dataset.price) {
+                price = parseInt(orderCard.dataset.price);
+              } else {
+                // Find price element with the class 'price'
+                const priceElement = orderCard.querySelector('.detail-value.price');
+                if (priceElement) {
+                  price = parseInt(priceElement.textContent.replace(/[^0-9]/g, ''));
+                } else {
+                  // Find element containing 'Total:' and get its sibling
+                  const priceLabels = orderCard.querySelectorAll('.detail-label');
+                  let priceText = '';
+                  
+                  for (let label of priceLabels) {
+                    if (label.textContent.includes('Total:') || label.textContent.includes('Price:')) {
+                      const valueElement = label.nextElementSibling;
+                      if (valueElement) {
+                        priceText = valueElement.textContent || '';
+                        break;
+                      }
+                    }
+                  }
+                  
+                  price = parseInt(priceText.replace(/[^0-9]/g, '')) || 1000;
+                }
+              }
+            }
+            
+            // Validation
+            if (!itemName || !price) {
+              throw new Error('Invalid item data');
+            }
+            
+            console.log('Adding to cart item:', itemName, 'price:', price, 'image:', imageUrl);
+            
+            // Add to cart (the showMessage call is now handled inside addToCart)
+            addToCart(itemName, price, imageUrl);
+            
+          } catch (error) {
+            console.error('Error preparing item for cart:', error);
+            showMessage('Could not add item to cart', 'error');
+          }
+        });
+      });
+    
+      // Get user data
+      const cartCount = document.getElementById('cart-count');
+      const logoutBtn = document.getElementById('logout-btn');
+      
+      // Set up logout button
+      if (logoutBtn) {
+      logoutBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+          localStorage.removeItem('foodpanda_current_user');
+          sessionStorage.removeItem('foodpanda_logged_in');
+          sessionStorage.removeItem('foodpanda_user_type');
+        window.location.href = '../index.html';
+      });
+    }
+    });
+    
+    // Add to cart function
+    function addToCart(name, price, imageUrl) {
+      try {
+        // Create item object
+        const cartItem = {
+          id: Date.now().toString(),
+          name: name,
+          price: price,
+          quantity: 1,
+          image: imageUrl
+        };
+        
+        console.log('Adding to cart:', cartItem);
+        
+        // Get existing cart
+        let cart = [];
+        try {
+          // Try both storage keys
+          const cartData = localStorage.getItem('foodpanda_cart') || localStorage.getItem('cart');
+          cart = cartData ? JSON.parse(cartData) : [];
+        } catch (e) {
+          console.error('Failed to parse existing cart:', e);
+          cart = [];
+        }
+        
+        // Check if item already exists
+        const existingItemIndex = cart.findIndex(item => item.name === name);
+        
+        if (existingItemIndex !== -1) {
+          // Increase quantity
+          cart[existingItemIndex].quantity = (parseInt(cart[existingItemIndex].quantity) || 1) + 1;
+          console.log('Updated quantity for', name, 'to', cart[existingItemIndex].quantity);
+          
+          // Show success message
+          showMessage(`Added another ${name} to cart`, 'success');
+        } else {
+          // Add new item
+          cart.push(cartItem);
+          console.log('Added new item to cart:', name);
+          
+          // Show success message
+          showMessage(`Added ${name} to cart`, 'success');
+        }
+        
+        // Save updated cart to both storage keys for consistency
+        const cartString = JSON.stringify(cart);
+        localStorage.setItem('cart', cartString);
+        localStorage.setItem('foodpanda_cart', cartString);
+        console.log('Cart saved to both storage locations:', cart);
+        
+        // Update UI
+        updateCartCounter();
+        
+        // Animate the cart icon
+        const cartCounter = document.querySelector('.cart-counter');
+        if (cartCounter) {
+          cartCounter.style.animation = 'none';
+          void cartCounter.offsetWidth; // Trigger reflow
+          cartCounter.style.animation = 'countAnimation 0.5s ease-out';
+        }
+      } catch (error) {
+        console.error('Error adding to cart:', error);
+        showMessage('Error adding item to cart', 'error');
+      }
+    }
+    
+    // Update cart counter
+    function updateCartCounter() {
+      const cartCounter = document.querySelector('.cart-counter');
+      const headerCartCount = document.getElementById('cart-count');
+      
+      try {
+        // Get cart data
+        let cart = [];
+        try {
+          const cartData = localStorage.getItem('cart');
+          cart = cartData ? JSON.parse(cartData) : [];
+        } catch (e) {
+          console.error('Failed to parse cart data:', e);
+          cart = [];
+        }
+        
+        // Calculate total items
+        const totalItems = cart.reduce((total, item) => {
+          return total + (parseInt(item.quantity) || 1);
+        }, 0);
+        
+        // Update counter in floating button
+        if (cartCounter) {
+          cartCounter.textContent = totalItems;
+        }
+        
+        // Update counter in header
+        if (headerCartCount) {
+          headerCartCount.textContent = totalItems;
+        }
+      } catch (error) {
+        console.error('Error updating cart counter:', error);
+        if (cartCounter) cartCounter.textContent = '0';
+        if (headerCartCount) headerCartCount.textContent = '0';
+      }
+    }
+    
+    // Handle favorite functionality
+    function setupFavoriteButtons() {
+      const favoriteButtons = document.querySelectorAll('.favorite-btn');
+      
+      // Get current favorites from localStorage
+      let favorites = [];
+      try {
+        const favoritesData = localStorage.getItem('foodpanda_favorites');
+        if (favoritesData) {
+          favorites = JSON.parse(favoritesData);
+        }
+      } catch (e) {
+        console.error('Error loading favorites:', e);
+        favorites = [];
+      }
+      
+      // Update UI to show current favorites
+      updateFavoritesUI(favorites);
+      
+      // Add click handlers to all favorite buttons
+      favoriteButtons.forEach(button => {
+        button.addEventListener('click', function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          
+          // Get the food item data
+          const orderCard = this.closest('.order-card');
+          if (!orderCard) return;
+          
+          const name = orderCard.querySelector('.order-name')?.textContent;
+          const price = orderCard.querySelector('.detail-value.price')?.textContent || 
+                       orderCard.dataset.price || '0';
+          const image = orderCard.querySelector('img')?.src || '';
+          const category = orderCard.dataset.category || '';
+          
+          // Create unique ID based on name (since names should be unique)
+          const itemId = name.toLowerCase().replace(/\s+/g, '_');
+          
+          // Check if item is already in favorites
+          const existingIndex = favorites.findIndex(item => item.id === itemId);
+          
+          if (existingIndex >= 0) {
+            // Remove from favorites
+            favorites.splice(existingIndex, 1);
+            showMessage(`Removed ${name} from favorites`, 'success');
+          } else {
+            // Add to favorites
+            favorites.push({
+              id: itemId,
+              name: name,
+              price: price,
+              image: image,
+              category: category
+            });
+            showMessage(`Added ${name} to favorites`, 'success');
+          }
+          
+          // Save updated favorites
+          localStorage.setItem('foodpanda_favorites', JSON.stringify(favorites));
+          
+          // Update UI to reflect changes
+          updateFavoritesUI(favorites);
+        });
+      });
+    }
+    
+    // Update favorite buttons UI based on current favorites
+    function updateFavoritesUI(favorites) {
+      const favoriteButtons = document.querySelectorAll('.favorite-btn');
+      
+      favoriteButtons.forEach(button => {
+        const orderCard = button.closest('.order-card');
+        if (!orderCard) return;
+        
+        const name = orderCard.querySelector('.order-name')?.textContent;
+        if (!name) return;
+        
+        const itemId = name.toLowerCase().replace(/\s+/g, '_');
+        const isFavorited = favorites.some(item => item.id === itemId);
+        
+        // Update icon
+        const iconElement = button.querySelector('i');
+        if (iconElement) {
+          if (isFavorited) {
+            iconElement.className = 'fas fa-heart'; // Solid heart for favorited
+            button.setAttribute('title', 'Remove from favorites');
+          } else {
+            iconElement.className = 'far fa-heart'; // Regular heart for not favorited
+            button.setAttribute('title', 'Add to favorites');
+          }
+        }
+      });
+    }
+    
+    // Show message function
+    function showMessage(message, type = 'success') {
+      // Remove any existing notifications first
+      const existingNotifications = document.querySelectorAll('.notification-popup');
+      existingNotifications.forEach(notification => notification.remove());
+      
+      // Create a small, fixed-size notification
+      const notification = document.createElement('div');
+      notification.className = `notification-popup ${type}`;
+      notification.textContent = message;
+      
+      // Style the notification
+      notification.style.position = 'fixed';
+      notification.style.top = '10px';
+      notification.style.right = '10px';
+      notification.style.backgroundColor = type === 'success' ? '#4CAF50' : '#f44336';
+      notification.style.color = 'white';
+      notification.style.padding = '10px 15px';
+      notification.style.borderRadius = '4px';
+      notification.style.boxShadow = '0 2px 5px rgba(0,0,0,0.2)';
+      notification.style.zIndex = '9999';
+      notification.style.maxWidth = '250px';
+      notification.style.fontSize = '14px';
+      notification.style.fontWeight = '500';
+      notification.style.animation = 'fadeIn 0.3s ease-out';
+      
+      // Add to document
+      document.body.appendChild(notification);
+      
+      // Add keyframes for animation
+      if (!document.getElementById('notification-animations')) {
+        const style = document.createElement('style');
+        style.id = 'notification-animations';
+        style.textContent = `
+          @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+          }
+          @keyframes fadeOut {
+            from { opacity: 1; transform: translateY(0); }
+            to { opacity: 0; transform: translateY(-10px); }
+          }
+        `;
+        document.head.appendChild(style);
+      }
+      
+      // Remove after delay
+      setTimeout(() => {
+        notification.style.animation = 'fadeOut 0.3s ease-out';
+        setTimeout(() => {
+          notification.remove();
+        }, 300);
+      }, 2000);
+    }
+  </script>
+</body>
+</html> 

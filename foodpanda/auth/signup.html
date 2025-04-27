@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign Up - Food Panda</title>
+  
+  <!-- Firebase SDK - Latest version that's compatible with the code -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
+  
+  <!-- Initialize Firebase with direct configuration -->
+  <script>
+    // Firebase initialization - Optimized for speed
+    document.addEventListener('DOMContentLoaded', function() {
+      // Initialize Firebase directly here
+      const firebaseConfig = {
+        apiKey: "AIzaSyDgx9bKrdhSz5Z5IS9sG1mxGlVnbyJNRG4",
+        authDomain: "foodpanda-clone-7340c.firebaseapp.com",
+        projectId: "foodpanda-clone-7340c",
+        storageBucket: "foodpanda-clone-7340c.appspot.com",
+        messagingSenderId: "735457527905",
+        appId: "1:735457527905:web:08ae983fd213dc41b34220",
+        measurementId: "G-YLE16W2SZJ"
+      };
+      
+      try {
+        if (typeof firebase !== 'undefined') {
+          // Initialize Firebase only once
+          if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+          }
+          console.log('Firebase initialized successfully in signup page');
+          window.firebaseInitialized = true;
+          
+          // Skip the test connection to save time
+            document.dispatchEvent(new Event('firebase-ready'));
+        } else {
+          console.error('Firebase SDK not loaded properly');
+          showMessage('Firebase SDK failed to load. Please check your internet connection and try again.', 'error');
+        }
+      } catch (error) {
+        console.error('Firebase initialization error:', error);
+        showMessage('Firebase initialization error: ' + error.message, 'error');
+      }
+    });
+  </script>
+  
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Main Styles -->
+  <link rel="stylesheet" href="../css/style.css">
+  
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+    
+    body {
+      background-color: #f9f9f9;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+    
+    .signup-container {
+      max-width: 400px;
+      width: 90%;
+      background-color: white;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      position: relative;
+    }
+    
+    .close-btn {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      width: 30px;
+      height: 30px;
+      background-color: #ff0080;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    
+    h1 {
+      font-size: 28px;
+      color: #666;
+      margin-bottom: 25px;
+      font-weight: 500;
+    }
+    
+    .form-group {
+      margin-bottom: 20px;
+    }
+    
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 16px;
+      color: #666;
+    }
+    
+    .form-control {
+      width: 100%;
+      padding: 12px 15px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 15px;
+      transition: border-color 0.3s;
+    }
+    
+    .form-control:focus {
+      outline: none;
+      border-color: #ff0080;
+    }
+    
+    .password-field {
+      position: relative;
+    }
+    
+    .password-toggle {
+      position: absolute;
+      right: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #999;
+      cursor: pointer;
+      background: none;
+      border: none;
+      font-size: 18px;
+    }
+    
+    .user-type-container {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    
+    .user-type-option {
+      flex: 1;
+      border: 2px solid #ddd;
+      border-radius: 6px;
+      padding: 15px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    
+    .user-type-option:hover {
+      border-color: #ff0080;
+      background-color: #fff9fb;
+    }
+    
+    .user-type-option.selected {
+      border-color: #ff0080;
+      background-color: #fff0f6;
+    }
+    
+    .user-type-option i {
+      font-size: 24px;
+      color: #666;
+      margin-bottom: 10px;
+      display: block;
+    }
+    
+    .user-type-option.selected i {
+      color: #ff0080;
+    }
+    
+    .user-type-option .type-title {
+      font-weight: 500;
+      color: #333;
+    }
+    
+    .user-type-option .type-description {
+      font-size: 12px;
+      color: #888;
+      margin-top: 5px;
+    }
+    
+    .btn {
+      width: 100%;
+      padding: 14px;
+      background-color: #ff0080;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: 500;
+      font-size: 16px;
+      margin-top: 10px;
+    }
+    
+    .btn:hover {
+      background-color: #e5007a;
+    }
+    
+    .login-link {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 14px;
+      color: #666;
+    }
+    
+    .login-link a {
+      color: #ff0080;
+      text-decoration: none;
+      font-weight: 500;
+    }
+    
+    .login-link a:hover {
+      text-decoration: underline;
+    }
+    
+    /* Loading overlay */
+    .loading-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(255,255,255,0.8);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      visibility: hidden;
+      opacity: 0;
+      transition: all 0.3s;
+    }
+    
+    .loading-overlay.show {
+      visibility: visible;
+      opacity: 1;
+    }
+    
+    .loading-spinner {
+      display: inline-block;
+      width: 40px;
+      height: 40px;
+      border: 3px solid rgba(255, 0, 128, 0.2);
+      border-radius: 50%;
+      border-top-color: #ff0080;
+      animation: spin 1s ease-in-out infinite;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    /* Success Popup Styles */
+    .success-popup {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    }
+    
+    .success-popup.show {
+      display: flex;
+      animation: fadeIn 0.3s ease-out;
+    }
+    
+    .success-popup-content {
+      background-color: white;
+      border-radius: 10px;
+      padding: 2rem;
+      text-align: center;
+      max-width: 400px;
+      width: 90%;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    }
+    
+    .success-icon {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background-color: rgba(152, 223, 139, 0.2);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 0 auto 1.5rem;
+    }
+    
+    .success-icon i {
+      color: #4CAF50;
+      font-size: 40px;
+    }
+    
+    #popup-title {
+      font-size: 1.75rem;
+      color: #333;
+      margin: 0 0 1rem;
+    }
+    
+    #popup-message {
+      color: #666;
+      margin-bottom: 1.5rem;
+      font-size: 1.1rem;
+    }
+    
+    .popup-ok-btn {
+      background-color: #6c5ce7;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      padding: 0.5rem 2rem;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+    
+    .popup-ok-btn:hover {
+      background-color: #5649c0;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    
+    /* Message styles */
+    .message {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 12px 20px;
+      border-radius: 4px;
+      color: white;
+      font-weight: 500;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      animation: slideIn 0.3s ease-out;
+    }
+    
+    .message.success {
+      background-color: #4CAF50;
+    }
+    
+    .message.error {
+      background-color: #f44336;
+    }
+    
+    .message.info {
+      background-color: #2196F3;
+    }
+    
+    .message i {
+      margin-right: 10px;
+    }
+    
+    .message.hide {
+      animation: slideOut 0.3s ease-out forwards;
+    }
+    
+    @keyframes slideIn {
+      from { transform: translateX(100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+    
+    @keyframes slideOut {
+      from { transform: translateX(0); opacity: 1; }
+      to { transform: translateX(100%); opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+  <div class="signup-container">
+    <button class="close-btn" onclick="window.location.href='../index.html'">
+      <i class="fas fa-times"></i>
+    </button>
+    
+    <h1>Welcome!</h1>
+    
+    <form id="signup-form">
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" id="email" class="form-control" placeholder="Enter your email">
+      </div>
+      
+      <div class="form-group">
+        <label for="name">Full Name</label>
+        <input type="text" id="name" class="form-control" placeholder="Enter your full name">
+      </div>
+      
+      <div class="form-group">
+        <label for="password">Password</label>
+        <div class="password-field">
+          <input type="password" id="password" class="form-control" placeholder="Enter your password">
+          <button type="button" class="password-toggle" onclick="togglePasswordVisibility()">
+            <i class="far fa-eye"></i>
+          </button>
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label>Account Type</label>
+        <div class="user-type-container">
+          <div class="user-type-option selected" onclick="selectUserType('customer', this)">
+            <i class="fas fa-user"></i>
+            <div class="type-title">Customer</div>
+            <div class="type-description">Order food from restaurants</div>
+          </div>
+          <div class="user-type-option" onclick="selectUserType('admin', this)">
+            <i class="fas fa-user-cog"></i>
+            <div class="type-title">Administrator</div>
+            <div class="type-description">Manage restaurants and menus</div>
+          </div>
+        </div>
+        <input type="hidden" id="user-type" value="customer">
+      </div>
+      
+      <button type="button" class="btn" id="direct-signup-button" onclick="directSignup()">Sign Up</button>
+      
+      <div class="login-link">
+        Already have an account? <a href="login.html">Sign In</a>
+      </div>
+    </form>
+  </div>
+
+  <!-- Loading Overlay -->
+  <div class="loading-overlay" id="loading-overlay">
+    <div class="loading-spinner"></div>
+  </div>
+
+  <!-- Message Container for notifications -->
+  <div id="message-container"></div>
+
+  <!-- Success popup -->
+  <div id="success-popup" class="success-popup">
+    <div class="success-popup-content">
+      <div class="success-icon">
+        <i class="fas fa-check"></i>
+      </div>
+      <h2 id="popup-title">Signup Successful</h2>
+      <p id="popup-message">Welcome, amishtalib786@gmail.com!</p>
+      <button id="popup-ok-btn" class="popup-ok-btn">OK</button>
+    </div>
+  </div>
+
+  <!-- Load the app.js file after Firebase is initialized -->
+  <script src="../js/app.js"></script>
+  
+  <!-- Signup form handling -->
+  <script>
+    // Toggle password visibility
+    function togglePasswordVisibility() {
+      const passwordInput = document.getElementById('password');
+      const toggleIcon = document.querySelector('.password-toggle i');
+      
+      if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        toggleIcon.classList.remove('fa-eye');
+        toggleIcon.classList.add('fa-eye-slash');
+      } else {
+        passwordInput.type = 'password';
+        toggleIcon.classList.remove('fa-eye-slash');
+        toggleIcon.classList.add('fa-eye');
+      }
+    }
+    
+    // Function to select user type
+    function selectUserType(type, element) {
+      // Update hidden input
+      document.getElementById('user-type').value = type;
+      
+      // Remove selected class from all options
+      const options = document.querySelectorAll('.user-type-option');
+      options.forEach(option => option.classList.remove('selected'));
+      
+      // Add selected class to clicked option
+      element.classList.add('selected');
+      
+      console.log('User type selected:', type);
+    }
+  
+    // Success popup function
+    function showSuccessPopup(title, message, redirectCallback) {
+      const popup = document.getElementById('success-popup');
+      const popupTitle = document.getElementById('popup-title');
+      const popupMessage = document.getElementById('popup-message');
+      const okButton = document.getElementById('popup-ok-btn');
+      
+      // Set content
+      popupTitle.textContent = title;
+      popupMessage.textContent = message;
+      
+      // Show popup
+      popup.classList.add('show');
+      
+      // Handle OK button
+      okButton.onclick = function() {
+        popup.classList.remove('show');
+        if (typeof redirectCallback === 'function') {
+          redirectCallback();
+        }
+      };
+    }
+    
+    // Function to show messages (non-blocking)
+    function showMessage(message, type = 'success') {
+      // Remove any existing messages
+      const existingMessages = document.querySelectorAll('.message');
+      existingMessages.forEach(msg => msg.remove());
+      
+      // Create message element
+      const messageContainer = document.createElement('div');
+      messageContainer.className = `message ${type}`;
+      messageContainer.innerHTML = `
+        <i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-times-circle' : 'fa-info-circle'}"></i>
+        <span>${message}</span>
+      `;
+      
+      document.body.appendChild(messageContainer);
+      
+      // Remove message after 3 seconds
+      setTimeout(() => {
+        messageContainer.classList.add('hide');
+        setTimeout(() => {
+          if (messageContainer.parentNode) {
+            document.body.removeChild(messageContainer);
+          }
+        }, 500);
+      }, 3000);
+    }
+  
+    // Simple direct signup function with optimization
+      window.directSignup = function() {
+        console.log('Direct signup function called');
+        
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value.trim();
+        const userType = document.getElementById('user-type').value;
+        const fullName = document.getElementById('name').value.trim();
+        
+        console.log('Form values:', { email, userType, fullName });
+        
+        // Basic validation
+      if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        showMessage('Please enter a valid email address', 'error');
+          return;
+        }
+        
+        if (!password || password.length < 6) {
+        showMessage('Password must be at least 6 characters', 'error');
+          return;
+        }
+        
+        if (!fullName) {
+        showMessage('Please enter your full name', 'error');
+          return;
+        }
+        
+        // Show loading animation
+      document.getElementById('loading-overlay').classList.add('show');
+      const directSignupButton = document.getElementById('direct-signup-button');
+        directSignupButton.textContent = 'Creating Account...';
+        directSignupButton.disabled = true;
+        
+      // Use Firebase authentication with a shorter timeout
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('Firebase connection timeout')), 10000)
+      );
+      
+      // Race between Firebase operation and timeout
+      Promise.race([
+        // Direct Firebase auth to avoid extra app.js call
+        (async () => {
+          try {
+            // Create user account
+            const userCredential = await firebase.auth().createUserWithEmailAndPassword(email, password);
+            console.log('User created successfully:', userCredential.user.uid);
+            
+            // Update profile and store user data in one batch
+            const [profileUpdate, firestoreUpdate] = await Promise.all([
+              userCredential.user.updateProfile({ displayName: fullName }),
+              firebase.firestore().collection('users').doc(userCredential.user.uid).set({
+                email,
+                name: fullName,
+                userType,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+              })
+            ]);
+            
+              // Store user data in localStorage for cross-page persistence
+              const userData = {
+              id: userCredential.user.uid,
+                email: email,
+                name: fullName,
+                userType: userType,
+                createdAt: new Date().toISOString()
+              };
+              
+              // Save to localStorage
+            localStorage.setItem('user', JSON.stringify(userData));
+            
+            // Hide loading overlay
+            document.getElementById('loading-overlay').classList.remove('show');
+            directSignupButton.textContent = 'Sign Up';
+            directSignupButton.disabled = false;
+            
+            // Show success popup and redirect
+            showSuccessPopup('Signup Successful', `Welcome, ${email}!`, function() {
+              // Redirect based on user type
+              if (userType === 'admin') {
+                window.location.href = '../admin/new-dashboard.html?registered=true';
+              } else {
+                window.location.href = '../customer/dashboard.html?registered=true';
+              }
+            });
+            
+            return true;
+          } catch (error) {
+            console.error('Firebase auth error:', error);
+            
+            // Hide loading overlay
+            document.getElementById('loading-overlay').classList.remove('show');
+            directSignupButton.textContent = 'Sign Up';
+            directSignupButton.disabled = false;
+            
+            // Show appropriate error
+            let errorMessage = 'An error occurred during signup.';
+            if (error.code === 'auth/email-already-in-use') {
+              errorMessage = 'This email is already registered. Please use a different email or sign in.';
+            }
+            
+            showMessage(errorMessage, 'error');
+            return false;
+          }
+        })(),
+        timeoutPromise
+      ]).catch(error => {
+        console.error('Signup error or timeout:', error);
+        
+        // Hide loading overlay
+        document.getElementById('loading-overlay').classList.remove('show');
+        directSignupButton.textContent = 'Sign Up';
+        directSignupButton.disabled = false;
+        
+        showMessage('Signup timed out. Please check your internet connection and try again.', 'error');
+      });
+    };
+  </script>
+</body>
+</html> 

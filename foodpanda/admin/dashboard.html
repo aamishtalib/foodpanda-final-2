@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard - foodpanda</title>
+  
+  <!-- Favicon -->
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23ff0080'/%3E%3Ccircle cx='50' cy='50' r='40' fill='white'/%3E%3Cpath d='M30 40 Q 40 25, 50 40' fill='%23ff0080'/%3E%3Ccircle cx='40' cy='40' r='3' fill='white'/%3E%3Cpath d='M70 40 Q 60 25, 50 40' fill='%23ff0080'/%3E%3Ccircle cx='60' cy='40' r='3' fill='white'/%3E%3Ccircle cx='50' cy='55' r='5' fill='%23ff0080'/%3E%3Cpath d='M40 65 Q 50 75, 60 65' fill='%23ff0080'/%3E%3C/svg%3E" type="image/svg+xml">
+  
+  <!-- Preconnect to external domains -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+  
+  <!-- CSS -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <link rel="stylesheet" href="../css/admin.css">
+  
+  <style>
+    /* Critical CSS for initial rendering */
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Poppins', sans-serif;
+      background-color: #f8f9fa;
+    }
+    
+    .admin-header {
+      background-color: white;
+      border-bottom: 1px solid #e1e1e1;
+      padding: 15px 0;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+    
+    .container {
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+    
+    .header-content {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    
+    .logo-section {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+    
+    .logo {
+      display: flex;
+      align-items: center;
+    }
+    
+    .logo a {
+      transition: transform 0.3s ease;
+    }
+    
+    .logo a:hover {
+      transform: scale(1.05);
+    }
+    
+    .logo-panda {
+      width: 48px;
+      height: 48px;
+      background-color: #ff0080;
+      border-radius: 10px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-right: 12px;
+      box-shadow: 0 2px 6px rgba(255, 0, 128, 0.3);
+      transition: all 0.3s ease;
+    }
+    
+    .logo a:hover .logo-panda {
+      box-shadow: 0 4px 12px rgba(255, 0, 128, 0.5);
+      transform: rotate(5deg);
+    }
+    
+    .dashboard-title {
+      font-size: 28px;
+      font-weight: 600;
+      color: #333;
+      margin-left: 20px;
+      position: relative;
+    }
+    
+    .dashboard-title:before {
+      content: "";
+      position: absolute;
+      left: -12px;
+      top: 50%;
+      transform: translateY(-50%);
+      height: 24px;
+      width: 2px;
+      background-color: #e1e1e1;
+    }
+    
+    /* Hide content until admin verification is complete */
+    #admin-content {
+      display: none;
+    }
+    
+    /* Spinner animation for loading indicator */
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    .btn-primary {
+      background-color: #ff0080;
+      color: white;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 8px;
+      font-weight: 500;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.3s ease;
+    }
+    
+    .btn-primary:hover {
+      background-color: #e50074;
+      box-shadow: 0 4px 8px rgba(255, 0, 128, 0.3);
+    }
+    
+    /* Hide Dishes and Categories in navigation globally */
+    .nav a[href*="dishes"], 
+    .nav a[href*="menu-items"], 
+    .nav a[href*="categories"],
+    .nav-links a[href*="dishes"], 
+    .nav-links a[href*="menu-items"], 
+    .nav-links a[href*="categories"],
+    .mobile-nav-links a[href*="dishes"], 
+    .mobile-nav-links a[href*="menu-items"], 
+    .mobile-nav-links a[href*="categories"] {
+      display: none !important;
+    }
+  </style>
+</head>
+<body>
+  <!-- Admin Header -->
+  <header class="admin-header">
+    <div class="container">
+      <div id="admin-content">
+        <div class="header-content">
+          <div class="logo-section">
+            <div class="logo">
+              <a href="../index.html" style="display: flex; align-items: center; text-decoration: none;">
+                <img src="../assets/real_panda_logo.png" alt="Foodpanda Logo" style="width: 48px; height: 48px; margin-right: 12px;">
+                <span style="font-weight: 700; font-size: 26px; color: #ff0080; letter-spacing: -0.5px;">
+                  foodpanda
+                </span>
+              </a>
+            </div>
+            <h1 class="dashboard-title">Admin Dashboard</h1>
+          </div>
+          
+          <div class="admin-actions">
+            <button class="btn-primary"><i class="fas fa-plus"></i> Add Restaurant</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="admin-main">
+    <div class="container">
+      <div id="admin-content">
+        <div class="dashboard-grid">
+          <!-- Dashboard content will go here -->
+          <h2>Welcome to the Admin Dashboard</h2>
+          <p>Manage your restaurants, food items, and orders here.</p>
+        </div>
+      </div>
+      
+      <!-- Loading indicator (visible until authentication) -->
+      <div id="loading-indicator" style="display: flex; justify-content: center; align-items: center; flex-direction: column; padding: 50px 0;">
+        <div style="width: 50px; height: 50px; border: 4px solid rgba(255, 0, 128, 0.2); border-radius: 50%; border-top-color: #ff0080; animation: spin 1s infinite linear;"></div>
+        <p style="margin-top: 20px; color: #666;">Verifying admin access...</p>
+      </div>
+      
+      <!-- Firebase error message -->
+      <div id="firebase-error" style="display: none; text-align: center; padding: 30px; background-color: #fff; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); margin-top: 20px;">
+        <div style="color: #e74c3c; font-size: 24px; margin-bottom: 15px;"><i class="fas fa-exclamation-triangle"></i></div>
+        <h3 style="margin-bottom: 10px; color: #333;">Error connecting to Firebase</h3>
+        <p style="color: #666; margin-bottom: 15px;">We're having trouble connecting to our database. Please try refreshing the page.</p>
+        <button id="retry-button" style="background-color: #ff0080; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: 500;">Retry Connection</button>
+      </div>
+    </div>
+  </main>
+
+  <!-- Firebase SDK - Latest version without defer attribute for faster loading -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
+  <!-- Authentication check script -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Initialize Firebase
+      const firebaseConfig = {
+        apiKey: "AIzaSyDgx9bKrdhSz5Z5IS9sG1mxGlVnbyJNRG4",
+        authDomain: "foodpanda-clone-7340c.firebaseapp.com",
+        projectId: "foodpanda-clone-7340c",
+        storageBucket: "foodpanda-clone-7340c.appspot.com",
+        messagingSenderId: "735457527905",
+        appId: "1:735457527905:web:08ae983fd213dc41b34220",
+        measurementId: "G-YLE16W2SZJ"
+      };
+      
+      // Show Firebase error
+      const showFirebaseError = () => {
+        document.getElementById('loading-indicator').style.display = 'none';
+        document.getElementById('firebase-error').style.display = 'block';
+      };
+      
+      // Retry connection
+      document.getElementById('retry-button').addEventListener('click', function() {
+        document.getElementById('firebase-error').style.display = 'none';
+        document.getElementById('loading-indicator').style.display = 'flex';
+        location.reload();
+      });
+      
+      // Set timeout for Firebase connection
+      const connectionTimeout = setTimeout(() => {
+        console.error('Firebase connection timeout');
+        showFirebaseError();
+      }, 15000);
+      
+      try {
+      // Initialize Firebase if not already initialized
+      if (!firebase.apps.length) {
+        firebase.initializeApp(firebaseConfig);
+      }
+      
+        // Check user authentication and admin role with error handling
+      firebase.auth().onAuthStateChanged(function(user) {
+          clearTimeout(connectionTimeout);
+          
+        if (!user) {
+          // No user is logged in, redirect to login page
+          console.log('No user logged in. Redirecting to login page...');
+          window.location.href = '../auth/login.html?redirect=admin';
+          return;
+        }
+        
+        // User is logged in, check if they're an admin
+        firebase.firestore().collection('users').doc(user.uid).get()
+          .then(function(doc) {
+            if (!doc.exists || doc.data().userType !== 'admin') {
+              // User is not an admin, redirect to home page
+              console.log('User is not an admin. Access denied.');
+              window.location.href = '../index.html';
+              alert('You do not have permission to access the admin dashboard.');
+            } else {
+              // User is an admin, proceed
+              console.log('Admin authenticated successfully.');
+              document.getElementById('admin-content').style.display = 'block';
+              document.getElementById('loading-indicator').style.display = 'none';
+                
+                // Replace any Login/Sign Up buttons with user info and logout
+                updateAuthButtons(user, doc.data());
+            }
+          })
+          .catch(function(error) {
+            console.error('Error checking admin status:', error);
+              showFirebaseError();
+            });
+        }, function(error) {
+          console.error('Auth state change error:', error);
+          showFirebaseError();
+        });
+      } catch (error) {
+        console.error('Firebase initialization error:', error);
+        showFirebaseError();
+      }
+      
+      // Function to update auth buttons with user info
+      function updateAuthButtons(user, userData) {
+        // Look for auth buttons container in the header
+        const authButtonsContainers = document.querySelectorAll('.auth-buttons');
+        if (authButtonsContainers.length === 0) {
+          // Create auth buttons container if it doesn't exist
+          const header = document.querySelector('header');
+          if (!header) return;
+          
+          const adminActions = header.querySelector('.admin-actions');
+          if (adminActions) {
+            // Add user info and logout button to admin actions
+            adminActions.innerHTML = `
+              <div style="display: flex; align-items: center; gap: 15px;">
+                <div style="text-align: right;">
+                  <div style="font-weight: 500; color: #333;">Welcome, ${userData.name || user.displayName || user.email}</div>
+                  <div style="font-size: 12px; color: #666;">Admin</div>
+                </div>
+                <button id="logout-btn" class="btn-primary" style="background-color: #e50074;">
+                  <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+              </div>
+            `;
+            
+            // Add event listener to logout button
+            document.getElementById('logout-btn').addEventListener('click', function() {
+              firebase.auth().signOut()
+                .then(() => {
+                  window.location.href = '../index.html';
+                })
+                .catch((error) => {
+                  console.error('Error signing out:', error);
+                });
+            });
+          }
+        } else {
+          // Update existing auth buttons containers
+          authButtonsContainers.forEach(container => {
+            container.innerHTML = `
+              <div style="display: flex; align-items: center; gap: 15px;">
+                <div style="text-align: right;">
+                  <div style="font-weight: 500; color: #333;">Welcome, ${userData.name || user.displayName || user.email}</div>
+                  <div style="font-size: 12px; color: #666;">Admin</div>
+                </div>
+                <button id="logout-btn" class="btn-primary" style="background-color: #e50074;">
+                  <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+              </div>
+            `;
+          });
+          
+          // Add event listener to all logout buttons
+          document.querySelectorAll('#logout-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+              firebase.auth().signOut()
+                .then(() => {
+                  window.location.href = '../index.html';
+                })
+                .catch((error) => {
+                  console.error('Error signing out:', error);
+                });
+          });
+      });
+        }
+      }
+    });
+  </script>
+
+  <!-- Scripts -->
+  <script src="../js/admin.js"></script>
+  
+  <!-- Custom script to modify navigation -->
+  <script>
+    // This script modifies the admin navigation bar to remove Dishes and Categories
+    document.addEventListener('DOMContentLoaded', function() {
+      // Function to remove unwanted navigation items
+      const removeNavItems = function() {
+        // Links to remove
+        const linksToRemove = ['Dishes', 'Categories'];
+        
+        // Check for desktop navigation
+        const navLinks = document.querySelectorAll('.nav-links a, .nav a');
+        navLinks.forEach(link => {
+          if (linksToRemove.includes(link.textContent.trim())) {
+            console.log(`Removing ${link.textContent.trim()} from desktop navigation`);
+            const listItem = link.closest('li') || link.parentElement;
+            if (listItem) {
+              listItem.remove();
+            } else {
+              link.remove();
+            }
+          }
+        });
+        
+        // Check for mobile navigation
+        const mobileNavLinks = document.querySelectorAll('.mobile-nav-links a, .mobile-nav a');
+        mobileNavLinks.forEach(link => {
+          if (linksToRemove.includes(link.textContent.trim())) {
+            console.log(`Removing ${link.textContent.trim()} from mobile navigation`);
+            const listItem = link.closest('li') || link.parentElement;
+            if (listItem) {
+              listItem.remove();
+            } else {
+              link.remove();
+            }
+          }
+        });
+      };
+      
+      // Run the function after a short delay to ensure the DOM is fully loaded
+      setTimeout(removeNavItems, 100);
+      
+      // Run again after a bit longer to catch any dynamically loaded elements
+      setTimeout(removeNavItems, 500);
+      
+      // Create a MutationObserver to watch for changes to the nav
+      const observer = new MutationObserver(function(mutations) {
+        removeNavItems();
+      });
+      
+      // Start observing the document with the configured parameters
+      observer.observe(document.body, { childList: true, subtree: true });
+    });
+  </script>
+</body>
+</html> 

@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign Up - Food Panda</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary-color: #d60f65;
+      --secondary-color: #f8f9fa;
+      --text-color: #333;
+      --light-grey: #f0f0f0;
+      --border-color: #ddd;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+    
+    body {
+      background-color: #f9f9f9;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .signup-container {
+      display: flex;
+      width: 100%;
+      max-width: 960px;
+      box-shadow: 0 5px 25px rgba(0,0,0,0.1);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    
+    .left-panel {
+      flex: 1;
+      background-color: var(--primary-color);
+      color: white;
+      padding: 40px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+    
+    .logo {
+      font-size: 3rem;
+      font-weight: 700;
+      margin-bottom: 20px;
+    }
+    
+    .tagline {
+      font-size: 1.2rem;
+      margin-bottom: 30px;
+      line-height: 1.5;
+    }
+    
+    .app-buttons {
+      display: flex;
+      gap: 15px;
+      margin-top: 30px;
+    }
+    
+    .app-button {
+      padding: 10px 20px;
+      background-color: rgba(255, 255, 255, 0.2);
+      color: white;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      text-decoration: none;
+      transition: all 0.3s ease;
+    }
+    
+    .app-button:hover {
+      background-color: rgba(255, 255, 255, 0.3);
+      transform: translateY(-2px);
+    }
+    
+    .app-button i {
+      font-size: 1.2rem;
+      margin-right: 8px;
+    }
+    
+    .right-panel {
+      flex: 1;
+      background-color: white;
+      padding: 40px 30px;
+    }
+    
+    .signup-form {
+      width: 100%;
+    }
+    
+    .form-row {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+    
+    .form-group {
+      margin-bottom: 20px;
+      width: 100%;
+    }
+    
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+      color: #666;
+      font-size: 0.95rem;
+    }
+    
+    .form-control {
+      width: 100%;
+      padding: 12px 15px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      transition: all 0.3s;
+    }
+    
+    .form-control:focus {
+      outline: none;
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 2px rgba(214, 15, 101, 0.1);
+    }
+    
+    .btn {
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 12px 20px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      width: 100%;
+      transition: all 0.3s;
+    }
+    
+    .btn:hover {
+      background-color: #c00d5d;
+    }
+    
+    .login-link {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 0.9rem;
+      color: #666;
+    }
+    
+    .login-link a {
+      color: var(--primary-color);
+      text-decoration: none;
+      font-weight: 500;
+    }
+    
+    .login-link a:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 768px) {
+      .signup-container {
+        flex-direction: column;
+        max-width: 480px;
+      }
+      
+      .left-panel {
+        padding: 30px 20px;
+      }
+      
+      .right-panel {
+        padding: 30px 20px;
+      }
+      
+      .form-row {
+        flex-direction: column;
+        gap: 0;
+      }
+    }
+    
+    /* Loading Overlay */
+    .loading-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(255,255,255,0.8);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      visibility: hidden;
+      opacity: 0;
+      transition: all 0.3s;
+    }
+    
+    .loading-overlay.show {
+      visibility: visible;
+      opacity: 1;
+    }
+    
+    .loading-spinner {
+      display: inline-block;
+      width: 50px;
+      height: 50px;
+      border: 4px solid rgba(214, 15, 101, 0.3);
+      border-radius: 50%;
+      border-top-color: var(--primary-color);
+      animation: spin 1s ease-in-out infinite;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <div class="signup-container">
+    <div class="left-panel">
+      <div class="logo">foodpanda</div>
+      <div class="tagline">Your favorite food, delivered fast to your door.</div>
+      <div class="app-buttons">
+        <a href="#" class="app-button">
+          <i class="fab fa-google-play"></i>
+          Google Play
+        </a>
+        <a href="#" class="app-button">
+          <i class="fab fa-apple"></i>
+          App Store
+        </a>
+      </div>
+    </div>
+    
+    <div class="right-panel">
+      <form id="signup-form" class="signup-form">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="first-name">Name</label>
+            <input type="text" id="first-name" class="form-control" placeholder="Enter your name">
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label for="email">Email Address</label>
+          <input type="email" id="email" class="form-control" placeholder="Enter your email">
+        </div>
+        
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" class="form-control" placeholder="Create a password (min. 6 characters)">
+        </div>
+        
+        <div class="form-group">
+          <label for="confirm-password">Confirm Password</label>
+          <input type="password" id="confirm-password" class="form-control" placeholder="Confirm your password">
+        </div>
+        
+        <div class="form-group">
+          <label for="user-type">I am a</label>
+          <select id="user-type" class="form-control">
+            <option value="customer">Customer</option>
+            <option value="admin">Restaurant Owner</option>
+          </select>
+        </div>
+        
+        <button type="button" id="signup-button" class="btn">Create Account</button>
+        
+        <div class="login-link">
+          Already have an account? <a href="login.html">Log In</a>
+        </div>
+      </form>
+    </div>
+  </div>
+  
+  <!-- Loading Overlay -->
+  <div class="loading-overlay" id="loading-overlay">
+    <div class="loading-spinner"></div>
+  </div>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      console.log('Register page loaded');
+      
+      const signupForm = document.getElementById('signup-form');
+      const firstNameInput = document.getElementById('first-name');
+      const emailInput = document.getElementById('email');
+      const passwordInput = document.getElementById('password');
+      const confirmPasswordInput = document.getElementById('confirm-password');
+      const userTypeSelect = document.getElementById('user-type');
+      const signupButton = document.getElementById('signup-button');
+      const loadingOverlay = document.getElementById('loading-overlay');
+      
+      // Storage keys
+      const STORAGE_KEYS = {
+        CURRENT_USER: 'foodpanda_current_user',
+        USERS: 'foodpanda_users'
+      };
+      
+      // Simple email validation function
+      function validateEmail(email) {
+        const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return re.test(email);
+      }
+      
+      // Handle signup click
+      signupButton.addEventListener('click', function() {
+        const firstName = firstNameInput.value.trim();
+        const email = emailInput.value.trim();
+        const password = passwordInput.value.trim();
+        const confirmPassword = confirmPasswordInput.value.trim();
+        const userType = userTypeSelect.value;
+        
+        console.log('Form values:', { firstName, email, userType });
+        
+        // Basic validation
+        if (!firstName) {
+          alert('Please enter your name');
+          return;
+        }
+        
+        if (!email || !validateEmail(email)) {
+          alert('Please enter a valid email address');
+          return;
+        }
+        
+        if (!password || password.length < 6) {
+          alert('Password must be at least 6 characters');
+          return;
+        }
+        
+        if (password !== confirmPassword) {
+          alert('Passwords do not match');
+          return;
+        }
+        
+        // Show loading animation
+        loadingOverlay.classList.add('show');
+        signupButton.textContent = 'Creating Account...';
+        signupButton.disabled = true;
+        
+        try {
+          // Create user object
+          const newUser = {
+            id: 'user_' + Date.now().toString(),
+            email: email,
+            name: firstName,
+            userType: userType,
+            createdAt: new Date().toISOString()
+          };
+          
+          console.log('Created user object:', newUser);
+          
+          // Store in localStorage directly
+          localStorage.setItem(STORAGE_KEYS.CURRENT_USER, JSON.stringify(newUser));
+          sessionStorage.setItem('foodpanda_logged_in', 'true');
+          sessionStorage.setItem('foodpanda_user_type', userType);
+          
+          console.log('User stored in localStorage and sessionStorage');
+          
+          // Add to users collection
+          try {
+            const users = JSON.parse(localStorage.getItem(STORAGE_KEYS.USERS) || '[]');
+            users.push({...newUser, password: password});
+            localStorage.setItem(STORAGE_KEYS.USERS, JSON.stringify(users));
+            console.log('User added to users collection');
+          } catch (e) {
+            console.error('Error storing user data:', e);
+            // Proceed anyway since the current user is already set
+          }
+          
+          // Show success message
+          alert('Account created successfully! Click OK to go to your dashboard.');
+          
+          // Redirect to dashboard
+          window.location.href = '../customer/dashboard.html?registered=true';
+        } catch (error) {
+          console.error('Error during signup:', error);
+          alert('An error occurred during signup. Please try again.');
+          
+          // Reset button
+          signupButton.textContent = 'Create Account';
+          signupButton.disabled = false;
+          loadingOverlay.classList.remove('show');
+        }
+      });
+      
+      // Handle form submission (as fallback)
+      signupForm.addEventListener('submit', function(event) {
+        event.preventDefault();
+        signupButton.click();
+      });
+    });
+  </script>
+</body>
+</html> 

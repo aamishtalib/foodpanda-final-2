@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FoodPanda Mobile App Interface</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+    
+    body {
+      background-color: #000;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+      overflow-x: hidden;
+    }
+    
+    .phone-container {
+      max-width: 90%;
+      position: relative;
+    }
+    
+    .phone-frame {
+      max-width: 100%;
+      height: auto;
+      display: block;
+      filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.5));
+    }
+    
+    .banner {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background-color: #fff;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+    
+    .banner-content {
+      display: flex;
+      align-items: center;
+      padding: 20px 30px;
+    }
+    
+    .banner-text {
+      flex: 2;
+    }
+    
+    .banner-title {
+      font-size: 2rem;
+      color: #4a2b2b;
+      font-weight: 700;
+      line-height: 1.1;
+      margin-bottom: 5px;
+    }
+    
+    .banner-subtitle {
+      font-size: 1.2rem;
+      color: #4a2b2b;
+      margin-bottom: 15px;
+    }
+    
+    .banner-button {
+      display: inline-block;
+      background-color: #ff0080;
+      color: white;
+      text-decoration: none;
+      padding: 8px 24px;
+      border-radius: 50px;
+      font-weight: 600;
+      font-size: 1rem;
+    }
+    
+    .banner-image {
+      flex: 1;
+      text-align: right;
+    }
+    
+    .banner-image img {
+      max-width: 100%;
+      height: auto;
+    }
+    
+    @media (max-width: 768px) {
+      .banner-title {
+        font-size: 1.5rem;
+      }
+      
+      .banner-subtitle {
+        font-size: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="phone-container">
+    <!-- This will display the full mobile screenshot you shared -->
+    <img src="../images (2).jpg" alt="FoodPanda Mobile App Interface" class="phone-frame">
+    
+    <!-- Bottom banner that appears to overlap the phone -->
+    <div class="banner">
+      <div class="banner-content">
+        <div class="banner-text">
+          <h2 class="banner-title">savings, delivered</h2>
+          <p class="banner-subtitle">delivery from 99¢</p>
+          <a href="#" class="banner-button">order now</a>
+        </div>
+        <div class="banner-image">
+          <img src="../images (6).jpg" alt="Burgers">
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html> 

@@ -1,0 +1,911 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Food Panda - Food Delivery</title>
+  
+  <!-- Favicon -->
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23ff0080'/%3E%3Ccircle cx='50' cy='50' r='40' fill='white'/%3E%3Cpath d='M30 40 Q 40 25, 50 40' fill='%23ff0080'/%3E%3Ccircle cx='40' cy='40' r='3' fill='white'/%3E%3Cpath d='M70 40 Q 60 25, 50 40' fill='%23ff0080'/%3E%3Ccircle cx='60' cy='40' r='3' fill='white'/%3E%3Ccircle cx='50' cy='55' r='5' fill='%23ff0080'/%3E%3Cpath d='M40 65 Q 50 75, 60 65' fill='%23ff0080'/%3E%3C/svg%3E" type="image/svg+xml">
+  
+  <!-- Preconnect to external domains to speed up loading -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+  <link rel="preconnect" href="https://www.gstatic.com">
+  
+  <!-- Critical CSS for initial loading -->
+  <style>
+    /* Page Loader - Critical CSS */
+    #page-loader {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: #fff;
+      z-index: 9999;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: opacity 0.3s ease;
+    }
+    
+    .loader-content {
+        text-align: center;
+    }
+    
+    .loader-spinner {
+      width: 60px;
+      height: 60px;
+      border: 5px solid rgba(255, 0, 128, 0.2);
+      border-radius: 50%;
+      border-top-color: #ff0080;
+      animation: spin 1s infinite linear;
+    }
+    
+    .loader-logo {
+      margin-top: 15px;
+      font-weight: bold;
+      color: #ff0080;
+      font-size: 24px;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    .hidden {
+      opacity: 0;
+      visibility: hidden;
+    }
+    
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Poppins', sans-serif;
+      overflow-x: hidden;
+    }
+    
+    /* Core layout styles to prevent layout shift */
+    header, main, footer {
+        width: 100%;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 15px;
+    }
+  </style>
+  
+  <!-- Load Font Awesome asynchronously -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"></noscript>
+  
+  <!-- Defer non-critical CSS -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+  <noscript><link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet"></noscript>
+  
+  <!-- Main stylesheet with async loading -->
+  <link rel="stylesheet" href="css/style.css" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="css/style.css"></noscript>
+  
+  <!-- Improved page loader handling -->
+  <script>
+    // Show page content when resources are loaded
+    document.addEventListener('DOMContentLoaded', function() {
+      // Start hiding loader once DOM is ready for interaction
+      setTimeout(function() {
+        document.getElementById('page-loader').classList.add('hidden');
+      }, 300);
+    });
+    
+    // Ensure loader is completely hidden after all resources are loaded
+    window.addEventListener('load', function() {
+      const loader = document.getElementById('page-loader');
+      if (loader) {
+        loader.classList.add('hidden');
+        setTimeout(function() {
+          loader.style.display = 'none';
+        }, 300);
+      }
+    });
+  </script>
+  
+  <!-- Firebase SDK - Latest version with defer attribute -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js" defer></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js" defer></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js" defer></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js" defer></script>
+  
+  <!-- Firebase initialization -->
+  <script defer>
+    // Firebase initialization
+    document.addEventListener('DOMContentLoaded', function() {
+      console.log('Initializing Firebase...');
+      // Initialize Firebase directly here
+      const firebaseConfig = {
+        apiKey: "AIzaSyDgx9bKrdhSz5Z5IS9sG1mxGlVnbyJNRG4",
+        authDomain: "foodpanda-clone-7340c.firebaseapp.com",
+        projectId: "foodpanda-clone-7340c",
+        storageBucket: "foodpanda-clone-7340c.appspot.com",
+        messagingSenderId: "735457527905",
+        appId: "1:735457527905:web:08ae983fd213dc41b34220",
+        measurementId: "G-YLE16W2SZJ"
+      };
+      
+      try {
+        // Check if Firebase SDK is loaded
+        if (typeof firebase === 'undefined') {
+          console.error('Firebase SDK not loaded. Loading fallback implementation...');
+          // Create a fallback implementation for critical functions
+          window.firebase = {
+            apps: [],
+            initializeApp: function() { 
+              console.log('Mock Firebase initialized');
+              return {}; 
+            },
+            auth: function() { 
+              return { 
+                onAuthStateChanged: function(callback) { callback(null); }
+              }; 
+            },
+            firestore: function() { 
+              return { 
+                collection: function() { 
+                  return { 
+                    doc: function() { 
+                      return { 
+                        get: function() { return Promise.resolve({ exists: false }); }
+                      }; 
+                    }
+                  }; 
+                }
+              }; 
+            }
+          };
+        }
+        
+        // Initialize Firebase if not already initialized
+        if (!firebase.apps.length) {
+          firebase.initializeApp(firebaseConfig);
+          console.log('Firebase initialized successfully in index.html');
+        } else {
+          console.log('Firebase already initialized');
+        }
+        
+        // Create a custom event to notify app.js that Firebase is ready
+        const firebaseReadyEvent = new Event('firebase-ready');
+        document.dispatchEvent(firebaseReadyEvent);
+        
+        // Check if user is logged in
+        firebase.auth().onAuthStateChanged(function(user) {
+          if (user) {
+            // User is logged in
+            console.log('User is signed in with ID:', user.uid);
+            
+            // Check if the user is an admin
+            firebase.firestore().collection('users').doc(user.uid).get()
+              .then(function(doc) {
+                if (doc.exists && doc.data().userType === 'admin') {
+                  // Show admin dashboard link
+                  const adminLink = document.getElementById('admin-dashboard-link');
+                  if (adminLink) {
+                    adminLink.style.display = 'block';
+                  }
+                  
+                  // Show mobile admin link
+                  const mobileAdminLink = document.getElementById('mobile-admin-link');
+                  if (mobileAdminLink) {
+                    mobileAdminLink.style.display = 'block';
+                  }
+                  
+                  console.log('User is an admin');
+                } else {
+                  // Hide admin dashboard link
+                  const adminLink = document.getElementById('admin-dashboard-link');
+                  if (adminLink) {
+                    adminLink.style.display = 'none';
+                  }
+                  
+                  // Hide mobile admin link
+                  const mobileAdminLink = document.getElementById('mobile-admin-link');
+                  if (mobileAdminLink) {
+                    mobileAdminLink.style.display = 'none';
+                  }
+                  
+                  console.log('User is not an admin');
+                }
+              })
+              .catch(function(error) {
+                console.error('Error getting user document:', error);
+              });
+          } else {
+            // User is not logged in
+            console.log('User is not signed in');
+            // Hide admin dashboard link
+            const adminLink = document.getElementById('admin-dashboard-link');
+            if (adminLink) {
+              adminLink.style.display = 'none';
+            }
+            
+            // Hide mobile admin link
+            const mobileAdminLink = document.getElementById('mobile-admin-link');
+            if (mobileAdminLink) {
+              mobileAdminLink.style.display = 'none';
+            }
+          }
+        });
+      } catch (error) {
+        console.error('Firebase initialization error:', error);
+        console.log('Continuing with limited functionality...');
+      }
+    });
+  </script>
+</head>
+<body>
+  <!-- Page Loader -->
+  <div id="page-loader">
+    <div class="loader-content">
+      <div class="loader-spinner"></div>
+      <div class="loader-logo">foodpanda</div>
+    </div>
+  </div>
+  
+  <!-- Notification Container -->
+  <div id="notification-container" style="position: fixed; top: 20px; right: 20px; max-width: 350px; z-index: 9999; display: flex; flex-direction: column; gap: 10px;"></div>
+
+  <!-- Header with improved mobile responsiveness -->
+  <header>
+    <div class="container">
+      <div class="header-content">
+        <div class="logo">
+          <a href="index.html" style="display: flex; align-items: center;">
+            <div style="width: 40px; height: 40px; background-color: #ff0080; border-radius: 8px; display: flex; justify-content: center; align-items: center; margin-right: 8px;">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="30" height="30">
+                <!-- Panda face -->
+                <circle cx="50" cy="50" r="40" fill="white"/>
+                <!-- Left eye -->
+                <path d="M30 40 Q 40 25, 50 40" fill="#ff0080"/>
+                <circle cx="40" cy="40" r="3" fill="white"/>
+                <!-- Right eye -->
+                <path d="M70 40 Q 60 25, 50 40" fill="#ff0080"/>
+                <circle cx="60" cy="40" r="3" fill="white"/>
+                <!-- Nose -->
+                <circle cx="50" cy="55" r="5" fill="#ff0080"/>
+                <!-- Mouth -->
+                <path d="M40 65 Q 50 75, 60 65" fill="#ff0080"/>
+              </svg>
+            </div>
+            <span style="font-weight: 700; font-size: 24px; color: #ff0080;">
+              foodpanda
+            </span>
+          </a>
+        </div>
+        
+        <div class="nav-menu">
+          <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="customer/restaurants.html">Restaurants</a></li>
+            <li><a href="customer/dishes.html">Dishes</a></li>
+            <li><a href="customer/dashboard.html">Dashboard</a></li>
+            <li id="admin-dashboard-link" style="display: none;"><a href="admin/dashboard.html"><i class="fas fa-user-shield"></i> Admin</a></li>
+          </ul>
+        </div>
+        
+        <div class="auth-buttons">
+          <a href="auth/login.html" class="btn btn-outline">Login</a>
+          <a href="auth/signup.html" class="btn btn-primary">Sign Up</a>
+        </div>
+        
+        <!-- Mobile menu button -->
+        <button class="mobile-menu-btn" id="mobile-menu-btn">
+          <i class="fas fa-bars"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+  
+  <!-- Mobile Menu -->
+  <div class="mobile-menu" id="mobile-menu">
+    <div class="mobile-menu-header">
+      <div class="logo">
+        <div style="width: 40px; height: 40px; background-color: #ff0080; border-radius: 8px; display: flex; justify-content: center; align-items: center; margin-right: 8px;">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="30" height="30">
+            <!-- Panda face -->
+            <circle cx="50" cy="50" r="40" fill="white"/>
+            <!-- Left eye -->
+            <path d="M30 40 Q 40 25, 50 40" fill="#ff0080"/>
+            <circle cx="40" cy="40" r="3" fill="white"/>
+            <!-- Right eye -->
+            <path d="M70 40 Q 60 25, 50 40" fill="#ff0080"/>
+            <circle cx="60" cy="40" r="3" fill="white"/>
+            <!-- Nose -->
+            <circle cx="50" cy="55" r="5" fill="#ff0080"/>
+            <!-- Mouth -->
+            <path d="M40 65 Q 50 75, 60 65" fill="#ff0080"/>
+          </svg>
+        </div>
+        <span style="font-weight: 700; font-size: 24px; color: #ff0080;">
+          foodpanda
+        </span>
+      </div>
+      <button class="mobile-menu-close" id="mobile-menu-close">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    <ul>
+      <li><a href="index.html">Home</a></li>
+      <li><a href="customer/restaurants.html">Restaurants</a></li>
+      <li><a href="customer/dishes.html">Dishes</a></li>
+      <li><a href="customer/dashboard.html">Dashboard</a></li>
+      <li id="mobile-admin-link" style="display: none;"><a href="admin/dashboard.html"><i class="fas fa-user-shield"></i> Admin Dashboard</a></li>
+      <li><a href="auth/login.html"><i class="fas fa-sign-in-alt"></i> Login</a></li>
+      <li><a href="auth/signup.html"><i class="fas fa-user-plus"></i> Sign Up</a></li>
+    </ul>
+  </div>
+
+  <!-- Add a black bottom border under the header -->
+  <div style="height: 3px; background-color: #222; width: 100%;"></div>
+
+  <!-- Hero Section -->
+  <section class="hero-section" style="background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('https://cdn.pixabay.com/photo/2017/02/15/10/39/salad-2068220_1280.jpg'); background-size: cover; background-position: center; padding: 120px 0; position: relative; overflow: hidden;">
+    <div class="container" style="position: relative; z-index: 2;">
+      <div class="hero-content" style="max-width: 600px; color: white; text-align: left;">
+        <span class="hero-badge" style="background-color: rgba(227, 2, 92, 0.2); color: #ff5a9e; padding: 8px 15px; border-radius: 20px; font-size: 14px; font-weight: 500; display: inline-block; margin-bottom: 20px;">
+          <i class="fas fa-utensils" style="margin-right: 5px;"></i> Food Delivery Service
+        </span>
+        <h1 style="font-size: 3.5rem; font-weight: 700; margin-bottom: 20px; line-height: 1.2;">Delicious Food <span style="color: #e3025c;">Delivered</span> To Your Door</h1>
+        <p style="font-size: 1.1rem; margin-bottom: 30px; opacity: 0.9; line-height: 1.6;">Order from our diverse range of restaurants and get your favorite food delivered fast. Enjoy exclusive deals and premium quality service.</p>
+        
+        <div class="hero-buttons" style="display: flex; flex-wrap: wrap; gap: 15px; margin-bottom: 30px;">
+          <a href="customer/restaurants.html" class="btn btn-primary" style="padding: 14px 30px; font-weight: 600; font-size: 16px; display: flex; align-items: center; justify-content: center; gap: 8px;">
+            <i class="fas fa-hamburger"></i> Order Now
+          </a>
+          <a href="customer/deals.html" class="btn btn-outline" style="padding: 14px 30px; font-weight: 600; font-size: 16px; border: 2px solid #fff; color: #fff; display: flex; align-items: center; justify-content: center; gap: 8px;">
+            <i class="fas fa-ticket-alt"></i> See Deals
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Food Categories Section -->
+  <section class="categories-showcase" style="padding: 60px 0; background-color: #fff; overflow: hidden;">
+    <div class="container" style="max-width: 1200px; margin: 0 auto; padding: 0 20px;">
+      <div class="section-header" style="text-align: center; margin-bottom: 40px;">
+        <h2 class="section-title" style="font-size: 2.5rem; font-weight: 700; margin-bottom: 5px;"><span style="color: #333;">Top</span> <span style="color: #ff0080;">Categories</span></h2>
+        <p class="section-subtitle" style="color: #666; font-size: 1.1rem; max-width: 600px; margin: 10px auto 0;">Explore our most popular food categories</p>
+      </div>
+      
+      <div style="position: relative; margin: 0 auto; max-width: 1160px;">
+        <!-- Arrow Navigation -->
+        <button id="prevBtn" style="position: absolute; top: 50%; left: -20px; transform: translateY(-50%); z-index: 10; width: 40px; height: 40px; background-color: #fff; border: none; border-radius: 50%; box-shadow: 0 2px 5px rgba(0,0,0,0.2); cursor: pointer; display: flex; align-items: center; justify-content: center;">
+          <i class="fas fa-chevron-left" style="color: #888;"></i>
+        </button>
+        
+        <div class="categories-slider-container" style="overflow: hidden; padding: 10px 0;">
+          <div class="categories-slider" id="categoriesSlider" style="display: flex; gap: 20px; transition: transform 0.5s ease;">
+            <!-- Category 1: Burger -->
+            <div class="category-item" style="flex: 0 0 280px; min-width: 280px; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+              <div style="position: relative; height: 200px; overflow: hidden;">
+                <img src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Burger" style="width: 100%; height: 100%; object-fit: cover;">
+                <div style="position: absolute; bottom: 0; left: 0; right: 0; padding: 20px 15px; background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);">
+                  <h3 style="color: white; margin: 0; font-size: 24px; font-weight: 600;">Burger</h3>
+                  <p style="color: rgba(255,255,255,0.8); margin: 5px 0 0; font-size: 14px;">American classic</p>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Category 2: Sushi -->
+            <div class="category-item" style="flex: 0 0 280px; min-width: 280px; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+              <div style="position: relative; height: 200px; overflow: hidden;">
+                <img src="https://images.unsplash.com/photo-1579871494447-9811cf80d66c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Sushi" style="width: 100%; height: 100%; object-fit: cover;">
+                <div style="position: absolute; bottom: 0; left: 0; right: 0; padding: 20px 15px; background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);">
+                  <h3 style="color: white; margin: 0; font-size: 24px; font-weight: 600;">Sushi</h3>
+                  <p style="color: rgba(255,255,255,0.8); margin: 5px 0 0; font-size: 14px;">Japanese delicacy</p>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Category 3: Pasta -->
+            <div class="category-item" style="flex: 0 0 280px; min-width: 280px; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+              <div style="position: relative; height: 200px; overflow: hidden;">
+                <img src="https://images.unsplash.com/photo-1563379926898-05f4575a45d8?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Pasta" style="width: 100%; height: 100%; object-fit: cover;">
+                <div style="position: absolute; bottom: 0; left: 0; right: 0; padding: 20px 15px; background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);">
+                  <h3 style="color: white; margin: 0; font-size: 24px; font-weight: 600;">Pasta</h3>
+                  <p style="color: rgba(255,255,255,0.8); margin: 5px 0 0; font-size: 14px;">Italian specialty</p>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Category 4: Pizza -->
+            <div class="category-item" style="flex: 0 0 280px; min-width: 280px; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+              <div style="position: relative; height: 200px; overflow: hidden;">
+                <img src="https://images.unsplash.com/photo-1513104890138-7c749659a591?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Pizza" style="width: 100%; height: 100%; object-fit: cover;">
+                <div style="position: absolute; bottom: 0; left: 0; right: 0; padding: 20px 15px; background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);">
+                  <h3 style="color: white; margin: 0; font-size: 24px; font-weight: 600;">Pizza</h3>
+                  <p style="color: rgba(255,255,255,0.8); margin: 5px 0 0; font-size: 14px;">Italian favorite</p>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Category 5: Mexican -->
+            <div class="category-item" style="flex: 0 0 280px; min-width: 280px; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+              <div style="position: relative; height: 200px; overflow: hidden;">
+                <img src="https://images.unsplash.com/photo-1599974579688-8dbdd335c77f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Mexican" style="width: 100%; height: 100%; object-fit: cover;">
+                <div style="position: absolute; bottom: 0; left: 0; right: 0; padding: 20px 15px; background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);">
+                  <h3 style="color: white; margin: 0; font-size: 24px; font-weight: 600;">Mexican</h3>
+                  <p style="color: rgba(255,255,255,0.8); margin: 5px 0 0; font-size: 14px;">Spicy favorites</p>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Category 6: Desserts -->
+            <div class="category-item" style="flex: 0 0 280px; min-width: 280px; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+              <div style="position: relative; height: 200px; overflow: hidden;">
+                <img src="https://images.unsplash.com/photo-1551024506-0bccd828d307?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Desserts" style="width: 100%; height: 100%; object-fit: cover;">
+                <div style="position: absolute; bottom: 0; left: 0; right: 0; padding: 20px 15px; background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);">
+                  <h3 style="color: white; margin: 0; font-size: 24px; font-weight: 600;">Desserts</h3>
+                  <p style="color: rgba(255,255,255,0.8); margin: 5px 0 0; font-size: 14px;">Sweet treats</p>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Category 7: Chinese -->
+            <div class="category-item" style="flex: 0 0 280px; min-width: 280px; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+              <div style="position: relative; height: 200px; overflow: hidden;">
+                <img src="https://images.unsplash.com/photo-1563245372-f21724e3856d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Chinese" style="width: 100%; height: 100%; object-fit: cover;">
+                <div style="position: absolute; bottom: 0; left: 0; right: 0; padding: 20px 15px; background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);">
+                  <h3 style="color: white; margin: 0; font-size: 24px; font-weight: 600;">Chinese</h3>
+                  <p style="color: rgba(255,255,255,0.8); margin: 5px 0 0; font-size: 14px;">Oriental cuisine</p>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Category 8: Healthy -->
+            <div class="category-item" style="flex: 0 0 280px; min-width: 280px; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+              <div style="position: relative; height: 200px; overflow: hidden;">
+                <img src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Healthy" style="width: 100%; height: 100%; object-fit: cover;">
+                <div style="position: absolute; bottom: 0; left: 0; right: 0; padding: 20px 15px; background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);">
+                  <h3 style="color: white; margin: 0; font-size: 24px; font-weight: 600;">Healthy</h3>
+                  <p style="color: rgba(255,255,255,0.8); margin: 5px 0 0; font-size: 14px;">Nutritious options</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <button id="nextBtn" style="position: absolute; top: 50%; right: -20px; transform: translateY(-50%); z-index: 10; width: 40px; height: 40px; background-color: #fff; border: none; border-radius: 50%; box-shadow: 0 2px 5px rgba(0,0,0,0.2); cursor: pointer; display: flex; align-items: center; justify-content: center;">
+          <i class="fas fa-chevron-right" style="color: #888;"></i>
+        </button>
+      </div>
+      
+      <!-- Navigation dots -->
+      <div class="slider-dots" style="display: flex; justify-content: center; margin-top: 30px; gap: 8px;">
+        <span class="dot active" style="width: 10px; height: 10px; border-radius: 50%; background-color: #ff0080; display: inline-block; cursor: pointer;"></span>
+        <span class="dot" style="width: 10px; height: 10px; border-radius: 50%; background-color: #ddd; display: inline-block; cursor: pointer;"></span>
+        <span class="dot" style="width: 10px; height: 10px; border-radius: 50%; background-color: #ddd; display: inline-block; cursor: pointer;"></span>
+        <span class="dot" style="width: 10px; height: 10px; border-radius: 50%; background-color: #ddd; display: inline-block; cursor: pointer;"></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slider Debug Script -->
+  <script>
+    window.addEventListener('load', function() {
+      console.log('Slider debug script running...');
+      
+      // Check if slider elements exist
+      const slider = document.getElementById('categoriesSlider');
+      const prevBtn = document.getElementById('prevBtn');
+      const nextBtn = document.getElementById('nextBtn');
+      const dots = document.querySelectorAll('.dot');
+      
+      console.log('Slider elements check:');
+      console.log('- Slider exists:', !!slider);
+      console.log('- Prev button exists:', !!prevBtn);
+      console.log('- Next button exists:', !!nextBtn);
+      console.log('- Dots found:', dots.length);
+      
+      if (slider && slider.children) {
+        console.log('- Slider has', slider.children.length, 'items');
+      }
+      
+      // Force reinitialize slider
+      setTimeout(() => {
+        console.log('Force reinitializing slider...');
+        if (typeof initCategorySlider === 'function') {
+          try {
+            // Clear any existing interval
+            if (window._sliderInterval) {
+              clearInterval(window._sliderInterval);
+            }
+            
+            // Call the initialization function
+            initCategorySlider();
+            
+            // Add a direct auto-slide implementation as backup
+            window._sliderInterval = setInterval(() => {
+              if (slider && slider.style) {
+                // Get current transform value
+                const transform = slider.style.transform || '';
+                const match = transform.match(/translateX\(-(\d+)px\)/);
+                let position = match ? parseInt(match[1]) : 0;
+                
+                // Calculate number of items and their width
+                const itemWidth = 300;
+                const totalItems = slider.children.length;
+                const visibleItems = Math.floor((slider.parentElement?.offsetWidth || 1200) / itemWidth);
+                const maxPosition = Math.max(0, totalItems - visibleItems) * itemWidth;
+                
+                // Move to next position or loop back
+                position += itemWidth;
+                if (position > maxPosition) position = 0;
+                
+                // Apply new transform
+                slider.style.transform = `translateX(-${position}px)`;
+                
+                // Update active dot if possible
+                if (dots.length > 0) {
+                  const dotIndex = Math.min(Math.floor(position / itemWidth / (totalItems / dots.length)), dots.length - 1);
+                  dots.forEach((dot, i) => dot.classList.toggle('active', i === dotIndex));
+                }
+                
+                console.log('Debug auto-slide: moved to position', position);
+              }
+            }, 5000); // Every 5 seconds as backup
+            
+            console.log('✅ Slider successfully reinitialized with backup auto-slide');
+          } catch (e) {
+            console.error('❌ Error reinitializing slider:', e);
+          }
+        } else {
+          console.error('❌ initCategorySlider function not found');
+        }
+      }, 2000);
+    });
+  </script>
+
+  <!-- Mobile App Download Section -->
+  <section style="background-color: #ff0080; padding: 40px 0; color: white;">
+    <div class="container" style="max-width: 1200px; margin: 0 auto; padding: 0 20px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;">
+      <div style="flex: 1 1 500px; padding-right: 20px; min-width: 280px;">
+        <h2 style="font-size: 36px; font-weight: 700; margin-bottom: 15px;">Put us in your pocket</h2>
+        <p style="font-size: 16px; line-height: 1.5; margin-bottom: 25px;">
+          Download the food and groceries you love. It's all at your fingertips – the restaurants and shops you love. Find the right food and groceries to suit your mood, and make the first bite last. Go ahead, download us.
+        </p>
+        
+        <div style="margin-bottom: 25px;">
+          <div style="border: 2px dashed white; padding: 10px; display: inline-block; border-radius: 8px; background-color: white;">
+            <img src="https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=https://foodpanda.com/app" alt="QR Code" style="width: 120px; height: 120px;">
+          </div>
+        </div>
+        
+        <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+          <a href="#" style="display: block;">
+            <img src="https://developer.apple.com/assets/elements/badges/download-on-the-app-store.svg" alt="App Store" style="height: 40px;">
+          </a>
+          <a href="#" style="display: block;">
+            <img src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" alt="Google Play" style="height: 40px;">
+          </a>
+          <a href="#" style="display: block;">
+            <img src="https://developer.huawei.com/consumer/en/images/app-gallery-badge.png" alt="App Gallery" style="height: 40px;">
+          </a>
+        </div>
+      </div>
+      
+      <div style="flex: 1 1 400px; display: flex; justify-content: flex-end; min-width: 280px;">
+        <img src="assets/foodpanda mobile app.png" alt="Foodpanda Mobile App" style="max-width: 300px; height: auto; filter: drop-shadow(0 10px 30px rgba(0,0,0,0.3));">
+      </div>
+    </div>
+  </section>
+
+  <!-- Featured Restaurants Section -->
+  <section style="padding: 60px 0; background-color: #f9f9f9;">
+    <div class="container" style="max-width: 1200px; margin: 0 auto; padding: 0 20px;">
+      <div style="text-align: center; margin-bottom: 40px;">
+        <h2 style="font-size: 2.5rem; font-weight: 700; margin-bottom: 15px;"><span style="color: #333;">Featured</span> <span style="color: #ff0080;">Restaurants</span></h2>
+        <p style="color: #666; font-size: 1.1rem; max-width: 700px; margin: 0 auto;">Discover popular restaurants in your area with exclusive offers and fast delivery options</p>
+      </div>
+      
+      <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); gap: 25px;">
+        <!-- Restaurant Card 1 -->
+        <div style="background-color: white; border-radius: 12px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.1); transition: transform 0.3s, box-shadow 0.3s; position: relative;">
+          <div style="position: relative;">
+            <button style="position: absolute; right: 15px; top: 15px; z-index: 10; background: none; border: none; cursor: pointer;">
+              <i class="far fa-heart" style="color: #ff0080; font-size: 20px;"></i>
+            </button>
+            <span style="position: absolute; left: 15px; top: 15px; background-color: rgba(255,255,255,0.9); color: #333; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 500;">
+              25-35 min
+            </span>
+            <img src="https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=1000&q=80" alt="Pizza House" style="width: 100%; height: 200px; object-fit: cover;">
+          </div>
+          <div style="padding: 20px;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+              <h3 style="font-size: 20px; font-weight: 700; margin: 0;">Pizza House</h3>
+              <span style="background-color: #ff0080; color: white; padding: 3px 8px; border-radius: 4px; font-weight: 700; font-size: 14px;">4.7</span>
+            </div>
+            <div style="color: #666; font-size: 14px; margin-bottom: 15px;">Italian • Pizza • Fast Food</div>
+            <div style="font-size: 16px; font-weight: 600; margin-bottom: 15px;">Price: PKR 499</div>
+            <button style="width: 100%; background-color: #ff0080; color: white; border: none; padding: 10px; border-radius: 4px; font-weight: 500; cursor: pointer; display: flex; align-items: center; justify-content: center;" class="add-to-cart-btn" data-id="pizza1" data-name="Pizza House Special" data-price="499" data-image="https://images.unsplash.com/photo-1513104890138-7c749659a591">
+              <i class="fas fa-shopping-cart" style="margin-right: 8px;"></i> Add to Cart
+            </button>
+          </div>
+        </div>
+
+        <!-- Restaurant Card 2 -->
+        <div style="background-color: white; border-radius: 12px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.1); transition: transform 0.3s, box-shadow 0.3s; position: relative;">
+          <div style="position: relative;">
+            <button style="position: absolute; right: 15px; top: 15px; z-index: 10; background: none; border: none; cursor: pointer;">
+              <i class="far fa-heart" style="color: #ff0080; font-size: 20px;"></i>
+            </button>
+            <span style="position: absolute; left: 15px; top: 15px; background-color: rgba(255,255,255,0.9); color: #333; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 500;">
+              15-25 min
+            </span>
+            <img src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=1000&q=80" alt="Burger King" style="width: 100%; height: 200px; object-fit: cover;">
+          </div>
+          <div style="padding: 20px;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+              <h3 style="font-size: 20px; font-weight: 700; margin: 0;">Burger King</h3>
+              <span style="background-color: #ff0080; color: white; padding: 3px 8px; border-radius: 4px; font-weight: 700; font-size: 14px;">4.5</span>
+            </div>
+            <div style="color: #666; font-size: 14px; margin-bottom: 15px;">American • Burgers • Fast Food</div>
+            <div style="font-size: 16px; font-weight: 600; margin-bottom: 15px;">Price: PKR 399</div>
+            <button style="width: 100%; background-color: #ff0080; color: white; border: none; padding: 10px; border-radius: 4px; font-weight: 500; cursor: pointer; display: flex; align-items: center; justify-content: center;" class="add-to-cart-btn" data-id="burger1" data-name="Burger King Special" data-price="399" data-image="https://images.unsplash.com/photo-1568901346375-23c9450c58cd">
+              <i class="fas fa-shopping-cart" style="margin-right: 8px;"></i> Add to Cart
+            </button>
+          </div>
+        </div>
+
+        <!-- Restaurant Card 3 -->
+        <div style="background-color: white; border-radius: 12px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.1); transition: transform 0.3s, box-shadow 0.3s; position: relative;">
+          <div style="position: relative;">
+            <button style="position: absolute; right: 15px; top: 15px; z-index: 10; background: none; border: none; cursor: pointer;">
+              <i class="far fa-heart" style="color: #ff0080; font-size: 20px;"></i>
+            </button>
+            <span style="position: absolute; left: 15px; top: 15px; background-color: rgba(255,255,255,0.9); color: #333; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 500;">
+              30-40 min
+            </span>
+            <img src="https://images.unsplash.com/photo-1563379926898-05f4575a45d8?auto=format&fit=crop&w=1000&q=80" alt="Pasta Place" style="width: 100%; height: 200px; object-fit: cover;">
+          </div>
+          <div style="padding: 20px;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+              <h3 style="font-size: 20px; font-weight: 700; margin: 0;">Pasta Place</h3>
+              <span style="background-color: #ff0080; color: white; padding: 3px 8px; border-radius: 4px; font-weight: 700; font-size: 14px;">4.8</span>
+            </div>
+            <div style="color: #666; font-size: 14px; margin-bottom: 15px;">Italian • Pasta • Fine Dining</div>
+            <div style="font-size: 16px; font-weight: 600; margin-bottom: 15px;">Price: PKR 599</div>
+            <button style="width: 100%; background-color: #ff0080; color: white; border: none; padding: 10px; border-radius: 4px; font-weight: 500; cursor: pointer; display: flex; align-items: center; justify-content: center;" class="add-to-cart-btn" data-id="pasta1" data-name="Pasta Place Special" data-price="599" data-image="https://images.unsplash.com/photo-1563379926898-05f4575a45d8">
+              <i class="fas fa-shopping-cart" style="margin-right: 8px;"></i> Add to Cart
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer" style="background-color: #222; color: #fff; padding: 60px 0 20px; margin-top: 60px;">
+    <div class="container" style="max-width: 1200px; margin: 0 auto; padding: 0 20px;">
+      <div class="footer-grid" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 40px; margin-bottom: 40px;">
+        <div class="footer-column">
+          <h3 style="font-size: 22px; margin-bottom: 20px; color: #ff0080; font-weight: 700;">foodpanda</h3>
+          <p style="color: #bbb; margin-bottom: 20px; line-height: 1.6;">Delivering food happiness to your doorstep.</p>
+          <div class="app-download-footer">
+            <p style="margin-bottom: 15px; color: #fff; font-weight: 500;">Get the app</p>
+            <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+              <a href="#" style="display: flex; align-items: center; background: #333; padding: 8px 16px; border-radius: 4px; color: white; text-decoration: none; transition: all 0.2s; width: 160px;">
+                <i class="fab fa-google-play" style="margin-right: 10px; font-size: 22px;"></i>
+                <span>
+                  <small style="display: block; font-size: 10px; opacity: 0.8;">GET IT ON</small>
+                  <strong style="font-size: 14px;">Google Play</strong>
+                </span>
+              </a>
+              <a href="#" style="display: flex; align-items: center; background: #333; padding: 8px 16px; border-radius: 4px; color: white; text-decoration: none; transition: all 0.2s; width: 160px;">
+                <i class="fab fa-apple" style="margin-right: 10px; font-size: 22px;"></i>
+                <span>
+                  <small style="display: block; font-size: 10px; opacity: 0.8;">Download on the</small>
+                  <strong style="font-size: 14px;">App Store</strong>
+                </span>
+              </a>
+            </div>
+          </div>
+        </div>
+        
+        <div class="footer-column">
+          <h4 style="font-size: 18px; margin-bottom: 25px; color: white; position: relative; padding-bottom: 10px; font-weight: 600;">
+            Quick Links
+            <span style="position: absolute; bottom: 0; left: 0; width: 40px; height: 3px; background-color: #ff0080;"></span>
+          </h4>
+          <ul style="list-style: none; padding: 0; margin: 0;">
+            <li style="margin-bottom: 12px;"><a href="index.html" style="color: #bbb; text-decoration: none; transition: color 0.2s;">Home</a></li>
+            <li style="margin-bottom: 12px;"><a href="customer/restaurants.html" style="color: #bbb; text-decoration: none; transition: color 0.2s;">Restaurants</a></li>
+            <li style="margin-bottom: 12px;"><a href="customer/dishes.html" style="color: #bbb; text-decoration: none; transition: color 0.2s;">Dishes</a></li>
+            <li style="margin-bottom: 12px;"><a href="customer/dashboard.html" style="color: #bbb; text-decoration: none; transition: color 0.2s;">Dashboard</a></li>
+            <li style="margin-bottom: 12px;"><a href="auth/login.html" style="color: #bbb; text-decoration: none; transition: color 0.2s;">Login</a></li>
+            <li style="margin-bottom: 12px;"><a href="auth/signup.html" style="color: #bbb; text-decoration: none; transition: color 0.2s;">Sign Up</a></li>
+          </ul>
+        </div>
+        
+        <div class="footer-column">
+          <h4 style="font-size: 18px; margin-bottom: 25px; color: white; position: relative; padding-bottom: 10px; font-weight: 600;">
+            Contact Us
+            <span style="position: absolute; bottom: 0; left: 0; width: 40px; height: 3px; background-color: #ff0080;"></span>
+          </h4>
+          <p style="margin-bottom: 15px; color: #bbb;"><i class="fas fa-envelope" style="margin-right: 10px; color: #ff0080; width: 20px; text-align: center;"></i> support@foodpanda.com</p>
+          <p style="margin-bottom: 15px; color: #bbb;"><i class="fas fa-phone-alt" style="margin-right: 10px; color: #ff0080; width: 20px; text-align: center;"></i> +1 (555) 123-4567</p>
+          <p style="margin-bottom: 25px; color: #bbb;"><i class="fas fa-map-marker-alt" style="margin-right: 10px; color: #ff0080; width: 20px; text-align: center;"></i> 123 Delivery St, Food City</p>
+          <div class="social-links" style="display: flex; gap: 12px;">
+            <a href="#" style="display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; background: #333; border-radius: 50%; color: white; transition: all 0.3s;"><i class="fab fa-facebook-f"></i></a>
+            <a href="#" style="display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; background: #333; border-radius: 50%; color: white; transition: all 0.3s;"><i class="fab fa-twitter"></i></a>
+            <a href="#" style="display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; background: #333; border-radius: 50%; color: white; transition: all 0.3s;"><i class="fab fa-instagram"></i></a>
+            <a href="#" style="display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; background: #333; border-radius: 50%; color: white; transition: all 0.3s;"><i class="fab fa-linkedin-in"></i></a>
+          </div>
+        </div>
+        
+        <div class="footer-column">
+          <h4 style="font-size: 18px; margin-bottom: 25px; color: white; position: relative; padding-bottom: 10px; font-weight: 600;">
+            Popular Locations
+            <span style="position: absolute; bottom: 0; left: 0; width: 40px; height: 3px; background-color: #ff0080;"></span>
+          </h4>
+          <ul style="list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;">
+            <li><a href="#" style="color: #bbb; text-decoration: none; transition: color 0.2s;">New York</a></li>
+            <li><a href="#" style="color: #bbb; text-decoration: none; transition: color 0.2s;">Los Angeles</a></li>
+            <li><a href="#" style="color: #bbb; text-decoration: none; transition: color 0.2s;">Chicago</a></li>
+            <li><a href="#" style="color: #bbb; text-decoration: none; transition: color 0.2s;">Houston</a></li>
+            <li><a href="#" style="color: #bbb; text-decoration: none; transition: color 0.2s;">Phoenix</a></li>
+            <li><a href="#" style="color: #bbb; text-decoration: none; transition: color 0.2s;">Philadelphia</a></li>
+            <li><a href="#" style="color: #bbb; text-decoration: none; transition: color 0.2s;">San Antonio</a></li>
+            <li><a href="#" style="color: #bbb; text-decoration: none; transition: color 0.2s;">San Diego</a></li>
+          </ul>
+        </div>
+      </div>
+      <div style="height: 1px; background-color: rgba(255,255,255,0.1); margin-bottom: 20px;"></div>
+      <div class="copyright" style="text-align: center; padding-top: 20px; font-size: 14px; color: #777;">
+        <p>© 2023 foodpanda. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Floating Cart Button -->
+  <div class="cart-icon-container">
+    <a href="customer/cart.html" class="cart-btn">
+      <i class="fas fa-shopping-cart"></i>
+      <span class="cart-counter" id="cartCounter">0</span>
+    </a>
+  </div>
+
+  <!-- Load main JavaScript file -->
+  <script src="js/app.js"></script>
+  
+  <!-- Load cart fix script to ensure cart functionality works properly -->
+  <script src="js/fix-cart.js"></script>
+
+  <!-- Initialize slider and mobile menu -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Mobile menu toggle
+      const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+      const mobileMenu = document.getElementById('mobile-menu');
+      const mobileMenuClose = document.getElementById('mobile-menu-close');
+      
+      if (mobileMenuBtn && mobileMenu) {
+        mobileMenuBtn.addEventListener('click', function() {
+          mobileMenu.classList.add('active');
+        });
+      }
+      
+      if (mobileMenuClose && mobileMenu) {
+        mobileMenuClose.addEventListener('click', function() {
+          mobileMenu.classList.remove('active');
+        });
+      }
+      
+      // Close mobile menu when clicking outside
+      document.addEventListener('click', function(e) {
+        if (mobileMenu && mobileMenu.classList.contains('active')) {
+          if (!mobileMenu.contains(e.target) && e.target !== mobileMenuBtn) {
+            mobileMenu.classList.remove('active');
+          }
+        }
+      });
+      
+      // Initialize category slider
+      window.initCategorySlider = function() {
+        const slider = document.getElementById('categoriesSlider');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const dots = document.querySelectorAll('.dot');
+        
+        if (!slider || !prevBtn || !nextBtn) return;
+        
+        let position = 0;
+        const itemWidth = 300; // Includes gap
+        const totalItems = slider.children.length;
+        
+        // Get number of visible items based on container width
+        const getVisibleItems = () => {
+          const containerWidth = slider.parentElement.offsetWidth;
+          return Math.floor(containerWidth / itemWidth);
+        };
+        
+        // Calculate max position
+        const getMaxPosition = () => {
+          const visibleItems = getVisibleItems();
+          return Math.max(0, (totalItems - visibleItems)) * itemWidth;
+        };
+        
+        // Update position of slider
+        const updateSliderPosition = () => {
+          slider.style.transform = `translateX(-${position}px)`;
+          
+          // Update dots
+          if (dots.length > 0) {
+            const maxPosition = getMaxPosition();
+            const totalDots = dots.length;
+            const dotIndex = maxPosition === 0 ? 0 : Math.min(Math.floor(position / maxPosition * (totalDots - 1)), totalDots - 1);
+            
+            dots.forEach((dot, i) => {
+              dot.classList.toggle('active', i === dotIndex);
+            });
+          }
+        };
+        
+        // Navigate to specific position
+        const goToPosition = (pos) => {
+          const maxPosition = getMaxPosition();
+          position = Math.max(0, Math.min(pos, maxPosition));
+          updateSliderPosition();
+        };
+        
+        // Event listeners for buttons
+        prevBtn.addEventListener('click', () => {
+          goToPosition(position - itemWidth);
+        });
+        
+        nextBtn.addEventListener('click', () => {
+          goToPosition(position + itemWidth);
+        });
+        
+        // Event listeners for dots
+        dots.forEach((dot, index) => {
+          dot.addEventListener('click', () => {
+            const maxPosition = getMaxPosition();
+            const newPosition = index * (maxPosition / (dots.length - 1));
+            goToPosition(newPosition);
+          });
+        });
+        
+        // Auto slide
+        let autoSlideInterval = setInterval(() => {
+          const maxPosition = getMaxPosition();
+          if (position >= maxPosition) {
+            position = 0;
+          } else {
+            position += itemWidth;
+          }
+          updateSliderPosition();
+        }, 5000);
+        
+        // Handle window resize
+        window.addEventListener('resize', () => {
+          const maxPosition = getMaxPosition();
+          if (position > maxPosition) {
+            position = maxPosition;
+            updateSliderPosition();
+          }
+        });
+        
+        return autoSlideInterval;
+      };
+      
+      // Initialize slider
+      window._sliderInterval = initCategorySlider();
+    });
+  </script>
+</body>
+</html> 

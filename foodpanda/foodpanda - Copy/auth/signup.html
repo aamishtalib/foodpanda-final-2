@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign Up - Food Panda</title>
+  
+  <!-- Firebase SDK - Latest version that's compatible with the code -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
+  
+  <!-- Initialize Firebase with direct configuration -->
+  <script>
+    // Firebase initialization
+    document.addEventListener('DOMContentLoaded', function() {
+      // Initialize Firebase directly here
+      const firebaseConfig = {
+        apiKey: "AIzaSyDgx9bKrdhSz5Z5IS9sG1mxGlVnbyJNRG4",
+        authDomain: "foodpanda-clone-7340c.firebaseapp.com",
+        projectId: "foodpanda-clone-7340c",
+        storageBucket: "foodpanda-clone-7340c.appspot.com",
+        messagingSenderId: "735457527905",
+        appId: "1:735457527905:web:08ae983fd213dc41b34220",
+        measurementId: "G-YLE16W2SZJ"
+      };
+      
+      try {
+        if (typeof firebase !== 'undefined') {
+          // Initialize Firebase
+          if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+          }
+          console.log('Firebase initialized successfully in signup page');
+          window.firebaseInitialized = true;
+          
+          // Test connection and permissions
+          const db = firebase.firestore();
+          db.collection('_test').doc('connection').set({
+            timestamp: new Date().toISOString(),
+            message: 'Firebase connection successful from signup page'
+          })
+          .then(() => {
+            console.log('✅ Firebase connection test successful in signup page');
+            document.dispatchEvent(new Event('firebase-ready'));
+          })
+          .catch(error => {
+            console.error('❌ Firebase connection test failed in signup page:', error);
+            alert('Firebase connection error: ' + error.message);
+          });
+        } else {
+          console.error('Firebase SDK not loaded properly');
+          alert('Firebase SDK failed to load. Please check your internet connection and try again.');
+        }
+      } catch (error) {
+        console.error('Firebase initialization error:', error);
+        alert('Firebase initialization error: ' + error.message);
+      }
+    });
+  </script>
+  
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Main Styles -->
+  <link rel="stylesheet" href="../css/style.css">
+  
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+    
+    body {
+      background-color: #f9f9f9;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+    
+    .signup-container {
+      max-width: 400px;
+      width: 90%;
+      background-color: white;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      position: relative;
+    }
+    
+    .close-btn {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      width: 30px;
+      height: 30px;
+      background-color: #ff0080;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    
+    h1 {
+      font-size: 28px;
+      color: #666;
+      margin-bottom: 25px;
+      font-weight: 500;
+    }
+    
+    .form-group {
+      margin-bottom: 20px;
+    }
+    
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 16px;
+      color: #666;
+    }
+    
+    .form-control {
+      width: 100%;
+      padding: 12px 15px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 15px;
+      transition: border-color 0.3s;
+    }
+    
+    .form-control:focus {
+      outline: none;
+      border-color: #ff0080;
+    }
+    
+    .password-field {
+      position: relative;
+    }
+    
+    .password-toggle {
+      position: absolute;
+      right: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #999;
+      cursor: pointer;
+      background: none;
+      border: none;
+      font-size: 18px;
+    }
+    
+    .user-type-container {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    
+    .user-type-option {
+      flex: 1;
+      border: 2px solid #ddd;
+      border-radius: 6px;
+      padding: 15px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    
+    .user-type-option:hover {
+      border-color: #ff0080;
+      background-color: #fff9fb;
+    }
+    
+    .user-type-option.selected {
+      border-color: #ff0080;
+      background-color: #fff0f6;
+    }
+    
+    .user-type-option i {
+      font-size: 24px;
+      color: #666;
+      margin-bottom: 10px;
+      display: block;
+    }
+    
+    .user-type-option.selected i {
+      color: #ff0080;
+    }
+    
+    .user-type-option .type-title {
+      font-weight: 500;
+      color: #333;
+    }
+    
+    .user-type-option .type-description {
+      font-size: 12px;
+      color: #888;
+      margin-top: 5px;
+    }
+    
+    .btn {
+      width: 100%;
+      padding: 14px;
+      background-color: #ff0080;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: 500;
+      font-size: 16px;
+      margin-top: 10px;
+    }
+    
+    .btn:hover {
+      background-color: #e5007a;
+    }
+    
+    .login-link {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 14px;
+      color: #666;
+    }
+    
+    .login-link a {
+      color: #ff0080;
+      text-decoration: none;
+      font-weight: 500;
+    }
+    
+    .login-link a:hover {
+      text-decoration: underline;
+    }
+    
+    /* Loading overlay */
+    .loading-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(255,255,255,0.8);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      visibility: hidden;
+      opacity: 0;
+      transition: all 0.3s;
+    }
+    
+    .loading-overlay.show {
+      visibility: visible;
+      opacity: 1;
+    }
+    
+    .loading-spinner {
+      display: inline-block;
+      width: 40px;
+      height: 40px;
+      border: 3px solid rgba(255, 0, 128, 0.2);
+      border-radius: 50%;
+      border-top-color: #ff0080;
+      animation: spin 1s ease-in-out infinite;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <div class="signup-container">
+    <button class="close-btn" onclick="window.location.href='../index.html'">
+      <i class="fas fa-times"></i>
+    </button>
+    
+    <h1>Welcome!</h1>
+    
+    <form id="signup-form">
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" id="email" class="form-control" placeholder="Enter your email">
+      </div>
+      
+      <div class="form-group">
+        <label for="name">Full Name</label>
+        <input type="text" id="name" class="form-control" placeholder="Enter your full name">
+      </div>
+      
+      <div class="form-group">
+        <label for="password">Password</label>
+        <div class="password-field">
+          <input type="password" id="password" class="form-control" placeholder="Enter your password">
+          <button type="button" class="password-toggle" onclick="togglePasswordVisibility()">
+            <i class="far fa-eye"></i>
+          </button>
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label>Account Type</label>
+        <div class="user-type-container">
+          <div class="user-type-option selected" onclick="selectUserType('customer', this)">
+            <i class="fas fa-user"></i>
+            <div class="type-title">Customer</div>
+            <div class="type-description">Order food from restaurants</div>
+          </div>
+          <div class="user-type-option" onclick="selectUserType('admin', this)">
+            <i class="fas fa-user-cog"></i>
+            <div class="type-title">Administrator</div>
+            <div class="type-description">Manage restaurants and menus</div>
+          </div>
+        </div>
+        <input type="hidden" id="user-type" value="customer">
+      </div>
+      
+      <button type="button" class="btn" id="direct-signup-button" onclick="directSignup()">Sign Up</button>
+      
+      <div class="login-link">
+        Already have an account? <a href="login.html">Sign In</a>
+      </div>
+    </form>
+  </div>
+
+  <!-- Loading Overlay -->
+  <div class="loading-overlay" id="loading-overlay">
+    <div class="loading-spinner"></div>
+  </div>
+
+  <!-- Message Container for notifications -->
+  <div id="message-container"></div>
+
+  <!-- Load the app.js file after Firebase is initialized -->
+  <script src="../js/app.js"></script>
+  
+  <!-- Signup form handling -->
+  <script>
+    // Toggle password visibility
+    function togglePasswordVisibility() {
+      const passwordInput = document.getElementById('password');
+      const toggleIcon = document.querySelector('.password-toggle i');
+      
+      if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        toggleIcon.classList.remove('fa-eye');
+        toggleIcon.classList.add('fa-eye-slash');
+      } else {
+        passwordInput.type = 'password';
+        toggleIcon.classList.remove('fa-eye-slash');
+        toggleIcon.classList.add('fa-eye');
+      }
+    }
+    
+    // Function to select user type
+    function selectUserType(type, element) {
+      // Update hidden input
+      document.getElementById('user-type').value = type;
+      
+      // Remove selected class from all options
+      const options = document.querySelectorAll('.user-type-option');
+      options.forEach(option => option.classList.remove('selected'));
+      
+      // Add selected class to clicked option
+      element.classList.add('selected');
+      
+      console.log('User type selected:', type);
+    }
+  
+    // Initialize Firebase if needed
+    document.addEventListener('DOMContentLoaded', function() {
+      // Check if Firebase is already initialized
+      if (typeof firebase === 'undefined' || firebase.apps.length === 0) {
+        console.log('Firebase not initialized, initializing...');
+        // Firebase configuration
+        const firebaseConfig = {
+          apiKey: "AIzaSyDgx9bKrdhSz5Z5IS9sG1mxGlVnbyJNRG4",
+          authDomain: "foodpanda-clone-7340c.firebaseapp.com",
+          projectId: "foodpanda-clone-7340c",
+          storageBucket: "foodpanda-clone-7340c.appspot.com",
+          messagingSenderId: "735457527905",
+          appId: "1:735457527905:web:08ae983fd213dc41b34220",
+          measurementId: "G-YLE16W2SZJ"
+        };
+
+        // Initialize Firebase
+        try {
+          firebase.initializeApp(firebaseConfig);
+          console.log('Firebase initialized in signup.html');
+          
+          // Dispatch event to notify app.js that Firebase is ready
+          document.dispatchEvent(new CustomEvent('firebase-ready'));
+          
+          // Test to ensure Firebase is working properly
+          firebase.firestore().collection('_test').add({
+            test: true,
+            timestamp: new Date().toISOString()
+          }).then(() => {
+            console.log('Firebase connection test: SUCCESS');
+          }).catch(error => {
+            console.error('Firebase connection test failed:', error);
+          });
+        } catch (error) {
+          console.error('Error initializing Firebase:', error);
+        }
+      } else {
+        console.log('Firebase already initialized');
+      }
+      
+      console.log('DOM content loaded for signup page');
+      
+      const signupForm = document.getElementById('signup-form');
+      const emailInput = document.getElementById('email');
+      const passwordInput = document.getElementById('password');
+      const loadingOverlay = document.getElementById('loading-overlay');
+      const directSignupButton = document.getElementById('direct-signup-button');
+      
+      // Define storage keys
+      const STORAGE_KEYS = {
+        CURRENT_USER: 'foodpanda_current_user',
+        USERS: 'foodpanda_users'
+      };
+      
+      // Simple email validation function
+      function validateEmail(email) {
+        const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return re.test(email);
+      }
+      
+      // Simple direct signup function that uses localStorage
+      window.directSignup = function() {
+        console.log('Direct signup function called');
+        
+        const email = emailInput.value.trim();
+        const password = passwordInput.value.trim();
+        const userType = document.getElementById('user-type').value;
+        const fullName = document.getElementById('name').value.trim();
+        
+        console.log('Form values:', { email, userType, fullName });
+        
+        // Basic validation
+        if (!email || !validateEmail(email)) {
+          alert('Please enter a valid email address');
+          return;
+        }
+        
+        if (!password || password.length < 6) {
+          alert('Password must be at least 6 characters');
+          return;
+        }
+        
+        if (!fullName) {
+          alert('Please enter your full name');
+          return;
+        }
+        
+        // Show loading animation
+        loadingOverlay.classList.add('show');
+        directSignupButton.textContent = 'Creating Account...';
+        directSignupButton.disabled = true;
+        
+        // Use Firebase authentication from foodPandaApp
+        window.foodPandaApp.registerUser(email, password, fullName, '', userType)
+          .then(result => {
+            console.log('Registration result:', result);
+            
+            if (result.success) {
+              // Store user data in localStorage for cross-page persistence
+              const userData = {
+                id: result.user?.uid || 'user_' + Date.now(),
+                email: email,
+                name: fullName,
+                userType: userType,
+                createdAt: new Date().toISOString()
+              };
+              
+              // Save to localStorage
+              localStorage.setItem('foodpanda_current_user', JSON.stringify(userData));
+              
+              // Set session storage for cross-page persistence
+              sessionStorage.setItem('foodpanda_logged_in', 'true');
+              sessionStorage.setItem('foodpanda_user_type', userType);
+              
+              console.log('User data stored in localStorage:', userData);
+              console.log('User type:', userType);
+              
+              // Show success message
+              alert('Account created successfully! Click OK to go to your dashboard.');
+              
+              // Redirect to dashboard based on user type
+              if (userType === 'admin') {
+                console.log('Redirecting to admin dashboard');
+                window.location.href = '../admin/new-dashboard.html?registered=true';
+              } else {
+                console.log('Redirecting to customer dashboard');
+                window.location.href = '../customer/dashboard.html?registered=true';
+              }
+            } else {
+              // Show error message
+              alert(result.error || 'An error occurred during signup. Please try again.');
+              
+              // Reset button
+              directSignupButton.textContent = 'Sign Up';
+              directSignupButton.disabled = false;
+              loadingOverlay.classList.remove('show');
+            }
+          })
+          .catch(error => {
+            console.error('Error during signup:', error);
+            alert('An error occurred during signup: ' + error.message);
+            
+            // Reset button
+            directSignupButton.textContent = 'Sign Up';
+            directSignupButton.disabled = false;
+            loadingOverlay.classList.remove('show');
+          });
+      };
+      
+      // Handle form submission (as fallback)
+      signupForm.addEventListener('submit', function(event) {
+        event.preventDefault();
+        directSignup();
+      });
+    });
+  </script>
+</body>
+</html> 
